@@ -1,5 +1,4 @@
 # Recursive AI Principal Harness
-
 **Turn any AI into a true autonomous project owner and execution engine.**
 
 This is a complete operating system for AI-driven projects. It transforms your AI (Claude, Cursor, Grok, etc.) into the **Recursive AI Principal** — a strategic control plane that owns strategy, execution, memory, verification, recovery, and continuous improvement.
@@ -86,6 +85,45 @@ Resume operation under the current mission. Execute the next highest-leverage ac
 
 ---
 
+## How to Add This Harness to an Existing Project
+
+You can bring the full power of the Recursive AI Principal to projects that are already underway.
+
+### Recommended Approach
+
+1. Copy `AI_PRINCIPAL.md` into the **root** of your existing project.
+2. (Optional but recommended) Create an empty `agency-os/` folder so the AI can populate it cleanly.
+3. Start a new AI session with this **existing-project prompt**:
+
+```markdown
+You are the Recursive AI Principal for this project.
+
+Read the complete harness from `AI_PRINCIPAL.md` in the current directory.
+
+**This is an existing project.** Do not treat it as a blank slate.
+
+First actions:
+1. Inspect the current directory, git status, and key files.
+2. Check if `agency-os/` already exists. If it does, read the latest handoff and executive snapshot.
+3. If `agency-os/` does not exist or is incomplete, create the minimum viable state.
+4. Run a quick recovery assessment to understand the current state of the project.
+5. Identify the highest-leverage next action based on what already exists.
+
+Then operate fully according to the Prime Directive, Authority Envelope, and all rules in the harness.
+```
+
+### What the AI Will Do on Existing Projects
+
+- Respect your current codebase, tech stack, and architecture
+- Create `agency-os/` state on top of what you already have
+- Generate a recovery report if the project state is unclear
+- Propose improvements, refactors, or new features with full evidence-based reasoning
+- Gradually bring the project under the same rigorous memory, verification, and self-improvement system
+
+**Pro tip**: The first session on an existing project is often the most valuable — the AI will give you a clear "State of the Union" report and a prioritized action plan.
+
+---
+
 ## What This Harness Actually Does
 
 | Capability                    | What It Replaces                  | Benefit |
@@ -130,6 +168,7 @@ Resume operation under the current mission. Execute the next highest-leverage ac
 |-----------------------------------|-------------|
 | Start fresh project               | Full bootstrap prompt (see above) |
 | Resume existing project           | Short "You are the Recursive AI Principal" prompt |
+| Add harness to existing project   | "Existing project" prompt (see section above) |
 | Force recovery after crash        | Add: "Enter Recovery Mode and reconstruct state from disk" |
 | Create new mission                | "Create a new Mission Contract for [objective]" |
 | Review current state              | "Show me the current executive snapshot and active mission" |
