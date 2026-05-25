@@ -493,6 +493,16 @@ agency-os/
     analytics/
     human-observations/
 
+  artifacts/
+    html/
+      README.md
+      exploration/
+      reviews/
+      diagrams/
+      prototypes/
+      reports/
+      editors/
+
   policies/
     data-policy.md
     public-claims-policy.md
@@ -554,6 +564,41 @@ agency-os/memory/executive-snapshot.md
 agency-os/recovery/BOOTSTRAP.md
 agency-os/handoff/latest.md
 ```
+
+## 10.1 HTML Companion Artifact Protocol
+
+Markdown is the default durable memory format for canonical project state.
+
+Use small, self-contained HTML artifacts when visual layout, interaction, comparison, timelines, diagrams, or custom editing interfaces materially improve human judgment, verification, or execution quality.
+
+HTML artifacts are companion artifacts unless explicitly promoted to canonical state. Canonical decisions, risks, assumptions, evidence, recovery state, mission contracts, policies, and handoffs must still be persisted in markdown ledgers.
+
+Good uses for HTML include:
+
+- Side-by-side strategy, architecture, implementation, or stack comparisons.
+- Tech Stack Council scorecards and visual fit matrices.
+- Architecture maps, module maps, dependency diagrams, and annotated flows.
+- Annotated PR, diff, or code review artifacts.
+- Timelines, incident reports, status dashboards, and progress reports.
+- UX flows, clickable prototypes, animation sandboxes, and design explorations.
+- Design token sheets, component variant sheets, and visual regression review pages.
+- Research explainers with collapsible sections, tabs, glossaries, or interactive examples.
+- Custom mini-editors that export decisions, config, prompts, or plans back to markdown, JSON, or another canonical format.
+
+HTML artifact rules:
+
+- Prefer markdown when a simple document, table, checklist, or ledger is sufficient.
+- Create HTML only when it reduces cognitive load or enables judgment that linear text cannot provide as well.
+- Keep HTML single-file and self-contained by default.
+- Store durable HTML under `agency-os/artifacts/html/` and link it from the relevant mission, decision, evidence, review, or report file.
+- Do not store secrets, credentials, private customer data, regulated data, or unapproved sensitive real data in HTML artifacts.
+- Use synthetic, mock, redacted, or public non-sensitive data unless a lawful reviewed process exists.
+- Include export-back behavior when the HTML is used as an editor or decision surface.
+- Record the canonical outcome in markdown after the HTML artifact informs a decision.
+- Commit HTML artifacts only when they create durable project value, recovery value, review value, or reusable leverage.
+- Verify locally that committed HTML artifacts open and render acceptably when they are part of serious work.
+
+HTML must not become ceremony. Its test is whether it makes the next human or AI decision faster, clearer, better evidenced, or easier to recover.
 
 ---
 
@@ -1097,6 +1142,13 @@ Observable and testable.
 
 ## Evidence required
 What proof must exist.
+
+## Artifact format decision
+Canonical state format:
+HTML companion artifact needed:
+Why / why not:
+Expected location:
+Export-back requirement:
 
 ## Verification plan
 Commands, checks, screenshots, citations, tests, review.
@@ -2211,6 +2263,11 @@ Demo only / Alpha / Beta / Production ready
 ## Next highest-leverage action
 
 ## Files changed
+
+## Artifacts created
+- Markdown:
+- HTML:
+- Other:
 
 ## Commits made
 
