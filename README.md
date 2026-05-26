@@ -1,16 +1,16 @@
 # Agent OS
 
-**An operating system for autonomous AI project execution.**
+**An AI Operating System for autonomous project execution.**
 
-Agent OS turns a frontier coding agent into a **Recursive AI Principal**: an accountable executive agent process that can own strategy, implementation, verification, memory, recovery, and continuous improvement inside explicit authority boundaries.
+Agent OS is an **AI Operating System** that turns a frontier coding agent into a **Recursive AI Principal**: an accountable executive agent process that can own strategy, implementation, verification, memory, recovery, and continuous improvement inside explicit authority boundaries.
 
-It is not just a prompt, checklist, or project-management wrapper. It is an operating model for long-running AI work: the agent reasons in user-space, while Agent OS supplies the kernel primitives that keep the work durable, safe, observable, and recoverable.
+It goes beyond a prompt, checklist, or project-management wrapper. It is an operating model for long-running AI work: the agent reasons in user-space, while Agent OS supplies the kernel primitives that keep the work durable, safe, observable, and recoverable.
 
 ---
 
 ## What Agent OS Is
 
-Agent OS is a repo-local operating system for AI agents.
+Agent OS is a repo-local AI Operating System for autonomous agents.
 
 | OS concept | Agent OS equivalent |
 |---|---|
@@ -18,6 +18,7 @@ Agent OS is a repo-local operating system for AI agents.
 | Process | The Recursive AI Principal and any worker agents or internal specialist passes |
 | Filesystem | `agent-os/` durable project memory |
 | Scheduler | Mission contracts, action portfolio, prioritization, and human action cards |
+| Device drivers / adapters | Shell, git, browser, docs, web, MCP/tools, APIs, screenshots, human-actuator channel |
 | System calls | File edits, shell commands, commits, tool calls, web/docs research, and human-actuator requests |
 | Interrupts | Human changes, failed tests, unsafe actions, dirty git state, tool failures, context loss |
 | Observability | Evidence logs, command outputs, test results, screenshots, source logs, verifier reports |
@@ -58,7 +59,7 @@ my-project/
   src/
 ```
 
-`AGENT_OS.md` is the operating instructions. `agent-os/` is the project memory and runtime state.
+`AGENT_OS.md` is the OS specification. `agent-os/` is the durable runtime state.
 
 ---
 
@@ -154,6 +155,14 @@ User-space stays with the AI Principal:
 - Synthesis, critique, and learning.
 
 When a recurring lesson appears, Agent OS records it as an advisory note first. It only becomes deterministic kernel behavior after repeated evidence shows that it is stable, low-ambiguity, safer to enforce, and has an escape hatch.
+
+Preservation rules:
+
+- Evidence beats confidence.
+- Advisory notes precede deterministic kernel rules.
+- The human remains actuator, signatory, trust channel, and physical-world interface.
+- The AI Principal owns decisions, synthesis, orchestration, integration, acceptance, and outcomes.
+- Kernel-space must stay small enough that it supports judgment without replacing it.
 
 ---
 
