@@ -1,0 +1,1791 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Agent OS is an AI Operating System for autonomous project execution.">
+  <title>Agent OS | AI Operating System</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07080a;
+      --bg-2: #0d0f12;
+      --panel: rgba(19, 23, 27, 0.76);
+      --panel-strong: rgba(27, 31, 36, 0.92);
+      --line: rgba(220, 230, 238, 0.16);
+      --line-strong: rgba(220, 230, 238, 0.28);
+      --text: #f5f7fa;
+      --muted: #aab3bd;
+      --quiet: #747f8a;
+      --mint: #5ef3bd;
+      --cyan: #5fd5ff;
+      --amber: #ffce6a;
+      --rose: #ff6b9d;
+      --violet: #b28cff;
+      --lime: #c7ff7a;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --max: 1180px;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      background:
+        linear-gradient(180deg, #07080a 0%, #0b0d10 42%, #08090b 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.36;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, black 0%, transparent 88%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .shell {
+      position: relative;
+      overflow: clip;
+    }
+
+    .nav {
+      position: fixed;
+      z-index: 20;
+      top: 0;
+      left: 0;
+      right: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 8, 10, 0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      height: 68px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 760;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(95, 213, 255, 0.42);
+      border-radius: 8px;
+      color: var(--mint);
+      background: linear-gradient(145deg, rgba(95, 213, 255, 0.18), rgba(94, 243, 189, 0.08));
+      box-shadow: inset 0 0 18px rgba(95, 213, 255, 0.12), 0 0 28px rgba(94, 243, 189, 0.08);
+    }
+
+    .brand-mark span {
+      width: 14px;
+      height: 14px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .brand-mark span::before,
+    .brand-mark span::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 2px;
+      top: 4px;
+      background: currentColor;
+    }
+
+    .brand-mark span::before {
+      left: -9px;
+    }
+
+    .brand-mark span::after {
+      right: -9px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      outline: none;
+    }
+
+    .hero {
+      min-height: 88svh;
+      position: relative;
+      display: grid;
+      align-items: center;
+      padding: 112px 0 72px;
+      isolation: isolate;
+    }
+
+    #systemCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      background: #07080a;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(7, 8, 10, 0.92) 0%, rgba(7, 8, 10, 0.72) 42%, rgba(7, 8, 10, 0.22) 100%),
+        linear-gradient(180deg, rgba(7, 8, 10, 0.1) 0%, rgba(7, 8, 10, 0.72) 100%);
+    }
+
+    .hero-inner {
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      gap: 40px;
+    }
+
+    .hero-copy {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(94, 243, 189, 0.32);
+      border-radius: 999px;
+      background: rgba(94, 243, 189, 0.08);
+      color: var(--mint);
+      font-size: 0.82rem;
+      font-weight: 720;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 18px var(--mint);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 900px;
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 0.16em;
+      row-gap: 0.04em;
+      font-size: clamp(4rem, 12vw, 9.4rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+      font-weight: 840;
+      overflow: visible;
+    }
+
+    .hero h1 span {
+      display: inline-block;
+      padding: 0 0 0.12em;
+      margin-bottom: -0.08em;
+      line-height: 1.08;
+      overflow: visible;
+      color: transparent;
+      background: linear-gradient(90deg, #f8fbff 0%, #c9fff0 34%, #ffe0a3 70%, #ff9cc0 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lede {
+      width: 100%;
+      max-width: 760px;
+      margin: 28px 0 0;
+      color: #d8dde3;
+      font-size: clamp(1.1rem, 2vw, 1.48rem);
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(95, 213, 255, 0.62);
+      background: rgba(95, 213, 255, 0.1);
+      outline: none;
+    }
+
+    .btn.primary {
+      border-color: rgba(94, 243, 189, 0.5);
+      background: linear-gradient(135deg, rgba(94, 243, 189, 0.18), rgba(95, 213, 255, 0.14));
+      box-shadow: 0 0 34px rgba(94, 243, 189, 0.12);
+    }
+
+    .hero-readout {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      max-width: 980px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--line);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .status-strip {
+      padding: 24px 0 54px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      background: #08090b;
+    }
+
+    .status-strip .hero-readout {
+      margin-top: -68px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .readout-cell {
+      min-height: 104px;
+      padding: 18px;
+      background: rgba(9, 11, 14, 0.78);
+      backdrop-filter: blur(14px);
+    }
+
+    .readout-cell strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--text);
+      font-size: 0.96rem;
+    }
+
+    .readout-cell span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    section {
+      position: relative;
+      padding: 92px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .band-dark {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .wrap {
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.55fr);
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 42px;
+    }
+
+    .kicker {
+      margin: 0 0 12px;
+      color: var(--amber);
+      font-size: 0.78rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(2rem, 5vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .section-head p,
+    .text-block p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.03rem;
+      line-height: 1.7;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .layer-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .layer-button {
+      width: 100%;
+      min-height: 70px;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .layer-button:hover,
+    .layer-button:focus-visible,
+    .layer-button.active {
+      border-color: rgba(94, 243, 189, 0.5);
+      background: rgba(94, 243, 189, 0.08);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .layer-number {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: var(--cyan);
+      background: rgba(95, 213, 255, 0.08);
+      font-weight: 780;
+    }
+
+    .layer-button b {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .layer-copy span {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .os-panel {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      grid-template-rows: minmax(390px, 1fr) auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+        #0b0d10;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .os-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+      background-size: 34px 34px;
+      opacity: 0.42;
+    }
+
+    .orbit-map {
+      position: relative;
+      z-index: 1;
+      min-height: 410px;
+      margin: 26px 26px 0;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      inset: 12%;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 50%;
+    }
+
+    .orbit-ring:nth-child(2) {
+      inset: 24%;
+      border-color: rgba(95, 213, 255, 0.22);
+    }
+
+    .orbit-ring:nth-child(3) {
+      inset: 36%;
+      border-color: rgba(94, 243, 189, 0.24);
+    }
+
+    .os-node {
+      position: absolute;
+      width: 150px;
+      min-height: 82px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: rgba(9, 11, 14, 0.84);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(14px);
+      transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+    }
+
+    .os-node.active {
+      border-color: rgba(94, 243, 189, 0.68);
+      background: rgba(94, 243, 189, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .os-node strong {
+      font-size: 0.95rem;
+    }
+
+    .os-node span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .node-principal {
+      left: calc(50% - 75px);
+      top: calc(50% - 41px);
+      border-color: rgba(255, 206, 106, 0.5);
+    }
+
+    .node-kernel {
+      left: 7%;
+      top: 10%;
+    }
+
+    .node-state {
+      right: 6%;
+      top: 14%;
+    }
+
+    .node-tools {
+      right: 7%;
+      bottom: 12%;
+    }
+
+    .node-human {
+      left: 8%;
+      bottom: 13%;
+    }
+
+    .panel-readout {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 0.7fr 1fr;
+      gap: 20px;
+      margin: 18px 24px 24px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(7, 8, 10, 0.82);
+      backdrop-filter: blur(16px);
+    }
+
+    .panel-readout b {
+      color: var(--mint);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+
+    .panel-readout p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .syscall-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .syscall-rail {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .call-step {
+      position: relative;
+      min-height: 190px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .call-step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: var(--accent, var(--mint));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 220ms ease;
+    }
+
+    .call-step:hover,
+    .call-step:focus-visible,
+    .call-step.active {
+      border-color: color-mix(in srgb, var(--accent, var(--mint)) 62%, white 10%);
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .call-step.active::before {
+      transform: scaleX(1);
+    }
+
+    .call-step small {
+      display: block;
+      margin-bottom: 18px;
+      color: var(--accent, var(--mint));
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .call-step b {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+    }
+
+    .call-step span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .terminal {
+      min-height: 404px;
+      border: 1px solid rgba(94, 243, 189, 0.24);
+      border-radius: 8px;
+      background: #050607;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .terminal-top {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--rose);
+    }
+
+    .dot:nth-child(2) {
+      background: var(--amber);
+    }
+
+    .dot:nth-child(3) {
+      background: var(--mint);
+    }
+
+    .terminal-body {
+      min-height: 360px;
+      padding: 18px;
+      color: #bfffe9;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.88rem;
+      line-height: 1.72;
+    }
+
+    .terminal-body p {
+      margin: 0 0 10px;
+    }
+
+    .terminal-body .muted {
+      color: #6f837d;
+    }
+
+    .terminal-body .hot {
+      color: #ffce6a;
+    }
+
+    .state-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .file-tree {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(9, 11, 14, 0.78);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .file-tree header {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--mint);
+      font-weight: 760;
+    }
+
+    .file-tree pre {
+      margin: 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #d7dde4;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    .capability-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .capability {
+      min-height: 154px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .capability b {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 1.02rem;
+    }
+
+    .capability p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .loop {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .loop-step {
+      min-height: 166px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.035);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loop-step::after {
+      content: "";
+      position: absolute;
+      inset: auto 14px 14px 14px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent, var(--cyan)), transparent);
+      opacity: 0.74;
+    }
+
+    .loop-step strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .loop-step span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .constitution {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .rule {
+      min-height: 168px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
+    }
+
+    .rule small {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--accent, var(--mint));
+      font-weight: 800;
+    }
+
+    .rule b {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.02rem;
+    }
+
+    .rule p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .boot-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(300px, 0.62fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .boot-copy {
+      display: grid;
+      align-content: center;
+      min-height: 380px;
+    }
+
+    .boot-copy p {
+      max-width: 680px;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 1.05rem;
+    }
+
+    .boot-code {
+      border: 1px solid rgba(95, 213, 255, 0.26);
+      border-radius: 8px;
+      background: #06080a;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .boot-code header {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--cyan);
+      font-weight: 740;
+    }
+
+    .copy-button {
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .copy-button:hover,
+    .copy-button:focus-visible {
+      border-color: rgba(95, 213, 255, 0.62);
+      outline: none;
+    }
+
+    .boot-code pre {
+      margin: 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: #dbe8f2;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.86rem;
+      line-height: 1.72;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      padding: 42px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--quiet);
+    }
+
+    .footer-inner {
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-inner a {
+      color: var(--text);
+      border-bottom: 1px solid rgba(94, 243, 189, 0.5);
+    }
+
+    .footer-inner a:hover,
+    .footer-inner a:focus-visible {
+      color: var(--mint);
+      outline: none;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1080px) {
+      .hero-readout,
+      .constitution {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .syscall-rail,
+      .loop {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .architecture,
+      .state-grid,
+      .boot-panel,
+      .syscall-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .terminal {
+        min-height: 320px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .nav-inner {
+        height: auto;
+        min-height: 64px;
+        padding: 10px 0;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        min-height: 88svh;
+        padding: 96px 0 48px;
+      }
+
+      h1 {
+        display: block;
+        font-size: clamp(3.2rem, 21vw, 5.4rem);
+      }
+
+      .hero h1 span {
+        display: block;
+      }
+
+      section {
+        padding: 66px 0;
+      }
+
+      .section-head {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .hero-readout,
+      .capability-grid,
+      .constitution,
+      .syscall-rail,
+      .loop {
+        grid-template-columns: 1fr;
+      }
+
+      .os-panel {
+        min-height: 660px;
+        grid-template-rows: minmax(430px, 1fr) auto;
+      }
+
+      .orbit-map {
+        min-height: 430px;
+        margin: 12px 12px 0;
+      }
+
+      .os-node {
+        width: 138px;
+      }
+
+      .node-principal {
+        left: calc(50% - 69px);
+        top: 43%;
+      }
+
+      .node-kernel {
+        left: 4%;
+        top: 6%;
+      }
+
+      .node-state {
+        right: 4%;
+        top: 18%;
+      }
+
+      .node-tools {
+        right: 4%;
+        bottom: 18%;
+      }
+
+      .node-human {
+        left: 4%;
+        bottom: 6%;
+      }
+
+      .panel-readout {
+        grid-template-columns: 1fr;
+        margin: 12px;
+      }
+
+      .readout-cell,
+      .call-step,
+      .loop-step,
+      .rule,
+      .capability {
+        min-height: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="nav" aria-label="Main navigation">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="Agent OS home">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span>Agent OS</span>
+        </a>
+        <div class="nav-links">
+          <a href="#architecture">Architecture</a>
+          <a href="#syscalls">System Calls</a>
+          <a href="#state">State</a>
+          <a href="#boot">Boot</a>
+          <a href="https://github.com/aghimir3/agent-os" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <main id="top">
+      <header class="hero" aria-labelledby="hero-title">
+        <canvas id="systemCanvas" aria-hidden="true"></canvas>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">AI Operating System</p>
+            <h1 id="hero-title"><span>Agent</span><span>OS</span></h1>
+            <p class="hero-lede">
+              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies durable memory, permissions, system-call boundaries, observability, recovery, and safety gates.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="#architecture">Explore the OS</a>
+              <a class="btn" href="#boot">Boot in a repo</a>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <section class="status-strip" aria-label="Agent OS summary">
+        <div class="wrap">
+          <div class="hero-readout">
+            <div class="readout-cell">
+              <strong>AI Principal</strong>
+              <span>Owns strategy, synthesis, orchestration, acceptance, and outcomes.</span>
+            </div>
+            <div class="readout-cell">
+              <strong>Kernel</strong>
+              <span>Enforces authority, system-call boundaries, recovery, and invariants.</span>
+            </div>
+            <div class="readout-cell">
+              <strong>Filesystem</strong>
+              <span>Persists missions, evidence, decisions, risks, handoff, and memory.</span>
+            </div>
+            <div class="readout-cell">
+              <strong>Human actuator</strong>
+              <span>Provides identity, trust, signatures, payment authority, and world access.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="band-dark">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <p class="kicker">Architecture</p>
+              <h2>The agent thinks in user-space. The OS makes work durable.</h2>
+            </div>
+            <p>
+              Agent OS keeps the deterministic substrate small. Judgment stays with the AI Principal until repeated evidence proves a behavior is stable, low-ambiguity, safer to enforce, and reversible.
+            </p>
+          </div>
+
+          <div class="architecture">
+            <div class="layer-list reveal" aria-label="OS layers">
+              <button class="layer-button active" data-layer="kernel">
+                <span class="layer-number">01</span>
+                <span class="layer-copy"><b>Kernel</b><span>Authority, permissions, interrupts, recovery, observability, and invariant gates.</span></span>
+              </button>
+              <button class="layer-button" data-layer="runtime">
+                <span class="layer-number">02</span>
+                <span class="layer-copy"><b>Runtime</b><span>AI Principal, worker agents, specialist passes, verifier passes, and red teams.</span></span>
+              </button>
+              <button class="layer-button" data-layer="filesystem">
+                <span class="layer-number">03</span>
+                <span class="layer-copy"><b>Filesystem</b><span>The `agent-os/` state tree that survives crashes, compaction, and handoff.</span></span>
+              </button>
+              <button class="layer-button" data-layer="scheduler">
+                <span class="layer-number">04</span>
+                <span class="layer-copy"><b>Scheduler</b><span>Mission contracts, action portfolio, dependencies, and human action cards.</span></span>
+              </button>
+              <button class="layer-button" data-layer="adapters">
+                <span class="layer-number">05</span>
+                <span class="layer-copy"><b>Adapters</b><span>Shell, git, browser, docs, web, APIs, MCP tools, screenshots, and human channels.</span></span>
+              </button>
+            </div>
+
+            <div class="os-panel reveal" aria-label="Agent OS visual map">
+              <div class="orbit-map" aria-hidden="true">
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring"></div>
+                <div class="orbit-ring"></div>
+                <div class="os-node node-kernel active" data-node="kernel">
+                  <strong>Kernel</strong>
+                  <span>Boundaries and recovery</span>
+                </div>
+                <div class="os-node node-state" data-node="filesystem">
+                  <strong>agent-os/</strong>
+                  <span>Durable runtime state</span>
+                </div>
+                <div class="os-node node-tools" data-node="adapters">
+                  <strong>Adapters</strong>
+                  <span>Tools and world I/O</span>
+                </div>
+                <div class="os-node node-human" data-node="scheduler">
+                  <strong>Human</strong>
+                  <span>Actuator and signatory</span>
+                </div>
+                <div class="os-node node-principal" data-node="runtime">
+                  <strong>AI Principal</strong>
+                  <span>Executive process</span>
+                </div>
+              </div>
+              <div class="panel-readout">
+                <b id="layerTitle">Kernel</b>
+                <p id="layerDescription">The kernel owns deterministic primitives: authority gates, durable memory, system-call boundaries, interrupts, observability, recovery, invariants, and high-risk gates.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="syscalls">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <p class="kicker">System-call boundary</p>
+              <h2>Every real change crosses a visible boundary.</h2>
+            </div>
+            <p>
+              The AI can reason freely, but durable or external state changes must move through intent, authority, action, evidence, state update, and recovery. This prevents fake execution and chat-only memory.
+            </p>
+          </div>
+
+          <div class="syscall-layout">
+            <div class="syscall-rail reveal" aria-label="System-call flow">
+              <button class="call-step active" style="--accent: var(--cyan)" data-call="intent">
+                <small>01</small>
+                <b>Intent</b>
+                <span>The agent states what it is changing and why that change matters.</span>
+              </button>
+              <button class="call-step" style="--accent: var(--amber)" data-call="authority">
+                <small>02</small>
+                <b>Authority</b>
+                <span>The OS checks permissions, risk, privacy, cost, and human-signatory needs.</span>
+              </button>
+              <button class="call-step" style="--accent: var(--mint)" data-call="action">
+                <small>03</small>
+                <b>Action</b>
+                <span>Files, tools, commits, browser work, docs, or human action cards execute visibly.</span>
+              </button>
+              <button class="call-step" style="--accent: var(--rose)" data-call="evidence">
+                <small>04</small>
+                <b>Evidence</b>
+                <span>Outputs, diffs, screenshots, tests, citations, or returned human proof are captured.</span>
+              </button>
+              <button class="call-step" style="--accent: var(--violet)" data-call="state">
+                <small>05</small>
+                <b>State</b>
+                <span>The result is recorded in missions, ledgers, decisions, risks, and handoff files.</span>
+              </button>
+              <button class="call-step" style="--accent: var(--lime)" data-call="recovery">
+                <small>06</small>
+                <b>Recovery</b>
+                <span>The next agent can resume from disk without trusting chat history.</span>
+              </button>
+            </div>
+
+            <aside class="terminal reveal" aria-label="Live system-call trace">
+              <div class="terminal-top">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <div class="terminal-body" id="terminalBody">
+                <p><span class="muted">$</span> syscall.intent("create useful state change")</p>
+                <p><span class="hot">authority</span> inside envelope: local files, git, verification</p>
+                <p>action: edit docs + persist decision</p>
+                <p>evidence: diff, checks, commit hash</p>
+                <p>state: update handoff + executive snapshot</p>
+                <p class="muted">recovery: future agent can resume from disk</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="state" class="band-dark">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <p class="kicker">Durable runtime state</p>
+              <h2>Memory is a filesystem, not a feeling.</h2>
+            </div>
+            <p>
+              Agent OS treats chat context as volatile. Canonical project memory lives under `agent-os/`, where missions, evidence, risk, decisions, recovery, and handoff survive interruption.
+            </p>
+          </div>
+
+          <div class="state-grid">
+            <div class="file-tree reveal">
+              <header>
+                <span>agent-os/</span>
+                <span>runtime state</span>
+              </header>
+              <pre>agent-os/
+  kernel/
+    authority-envelope.md
+    agent-os-model.md
+    interrupt-protocol.md
+  state/
+    decision-log.md
+    risk-register.md
+    assumption-ledger.md
+    evidence-ledger.md
+  missions/
+    current.md
+  queue/
+    action-portfolio.md
+    human-action-cards.md
+  memory/
+    executive-snapshot.md
+  recovery/
+    BOOTSTRAP.md
+  handoff/
+    latest.md</pre>
+            </div>
+
+            <div class="capability-grid reveal">
+              <article class="capability">
+                <b>Mission contracts</b>
+                <p>Scope the work, define acceptance, list risks, and keep execution tied to evidence.</p>
+              </article>
+              <article class="capability">
+                <b>Evidence court</b>
+                <p>Claims stand only when backed by files, tools, tests, sources, screenshots, or returned human proof.</p>
+              </article>
+              <article class="capability">
+                <b>Interrupt handling</b>
+                <p>Failed tests, dirty git state, unsafe actions, tool failures, and human updates stop blind continuation.</p>
+              </article>
+              <article class="capability">
+                <b>Self-improvement</b>
+                <p>Lessons start as advisory notes, then graduate to skills, evals, templates, automation, or kernel rules only when justified.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="loop">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <p class="kicker">Operating loop</p>
+              <h2>Autonomy with checkpoints, proof, and recovery.</h2>
+            </div>
+            <p>
+              Agent OS is built for long-running work. It discovers context, chooses missions, executes through tools, verifies outcomes, learns from friction, and leaves the next session recoverable.
+            </p>
+          </div>
+
+          <div class="loop reveal" aria-label="Agent OS operating loop">
+            <div class="loop-step" style="--accent: var(--cyan)">
+              <strong>Boot</strong>
+              <span>Read the spec, inspect the repo, classify the project, and initialize durable state.</span>
+            </div>
+            <div class="loop-step" style="--accent: var(--amber)">
+              <strong>Orient</strong>
+              <span>Load memory, assumptions, risks, decisions, git state, docs, and active constraints.</span>
+            </div>
+            <div class="loop-step" style="--accent: var(--mint)">
+              <strong>Mission</strong>
+              <span>Select the highest-leverage safe action and write acceptance criteria before acting.</span>
+            </div>
+            <div class="loop-step" style="--accent: var(--rose)">
+              <strong>Execute</strong>
+              <span>Use tools, agents, files, commits, research, and human action cards inside authority.</span>
+            </div>
+            <div class="loop-step" style="--accent: var(--violet)">
+              <strong>Verify</strong>
+              <span>Run checks, review evidence, red-team results, and reject weak or unproven work.</span>
+            </div>
+            <div class="loop-step" style="--accent: var(--lime)">
+              <strong>Recover</strong>
+              <span>Persist handoff, snapshot, ledgers, and next action so work survives context loss.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="constitution" class="band-dark">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <p class="kicker">Constitution</p>
+              <h2>The rules that keep the OS from replacing understanding.</h2>
+            </div>
+            <p>
+              The system improves itself, but it does not confuse more code with more agency. Kernel behavior stays minimal, evidence-driven, and reversible.
+            </p>
+          </div>
+
+          <div class="constitution reveal">
+            <article class="rule" style="--accent: var(--amber)">
+              <small>01</small>
+              <b>AI Principal owns outcomes</b>
+              <p>Decisions, synthesis, orchestration, integration, acceptance, and final accountability stay with the executive agent.</p>
+            </article>
+            <article class="rule" style="--accent: var(--cyan)">
+              <small>02</small>
+              <b>Kernel owns invariants</b>
+              <p>Permissions, durable memory, system-call boundaries, interrupts, observability, recovery, and high-risk gates live in the kernel.</p>
+            </article>
+            <article class="rule" style="--accent: var(--mint)">
+              <small>03</small>
+              <b>Human remains actuator</b>
+              <p>The human supplies identity, social trust, legal signature, financial authority, physical-world action, and real-world evidence.</p>
+            </article>
+            <article class="rule" style="--accent: var(--rose)">
+              <small>04</small>
+              <b>Advisory before deterministic</b>
+              <p>Judgment-heavy lessons become advisory notes first. Only stable, low-ambiguity behavior graduates into kernel rules.</p>
+            </article>
+            <article class="rule" style="--accent: var(--violet)">
+              <small>05</small>
+              <b>Evidence beats confidence</b>
+              <p>Fluent claims, plans, and demos do not count without observable proof from tools, tests, files, sources, or humans.</p>
+            </article>
+            <article class="rule" style="--accent: var(--lime)">
+              <small>06</small>
+              <b>Kernel-space stays small</b>
+              <p>Strategy, product judgment, architecture taste, naming, UX, and synthesis stay in runtime unless proven otherwise.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="boot">
+        <div class="wrap">
+          <div class="boot-panel">
+            <div class="boot-copy reveal">
+              <p class="kicker">Boot sequence</p>
+              <h2>Drop the OS into any repo.</h2>
+              <p>
+                Commit `AGENT_OS.md`, then ask the agent to boot. It inspects the repository, creates or updates the `agent-os/` runtime state, writes the first mission, executes the safest useful next action, verifies, and leaves recovery state behind.
+              </p>
+              <div class="hero-actions">
+                <a class="btn primary" href="https://github.com/aghimir3/agent-os/blob/main/AGENT_OS.md" target="_blank" rel="noreferrer">Open the spec</a>
+                <a class="btn" href="https://github.com/aghimir3/agent-os/blob/main/README.md" target="_blank" rel="noreferrer">README</a>
+              </div>
+            </div>
+
+            <div class="boot-code reveal">
+              <header>
+                <span>boot prompt</span>
+                <button class="copy-button" type="button" id="copyBoot">Copy</button>
+              </header>
+              <pre id="bootPrompt">You are the Recursive AI Principal and Agent OS Orchestrator for this project.
+
+Read `AGENT_OS.md` in the current directory.
+
+Boot Agent OS:
+- Identify the current execution mode.
+- Inspect the repo, git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state.
+- Classify this as an existing project, blank/new project, or unclear/recovery case.
+- Create or update the minimum viable `agent-os/` state.
+- Create the first Mission Contract.
+- Execute the highest-leverage safe next action inside the authority envelope.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <span>Agent OS</span>
+        <span>
+          Maximize useful project state change per unit of risk, time, money, and human effort.
+          <a href="https://github.com/aghimir3/agent-os" target="_blank" rel="noreferrer">aghimir3/agent-os</a>
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (() => {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const layerCopy = {
+        kernel: {
+          title: "Kernel",
+          description: "The kernel owns deterministic primitives: authority gates, durable memory, system-call boundaries, interrupts, observability, recovery, invariants, and high-risk gates."
+        },
+        runtime: {
+          title: "Runtime",
+          description: "The AI Principal and any worker agents operate here. Strategy, product judgment, architecture judgment, naming, UX, synthesis, and acceptance stay in runtime."
+        },
+        filesystem: {
+          title: "Filesystem",
+          description: "`agent-os/` is durable state: missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
+        },
+        scheduler: {
+          title: "Scheduler",
+          description: "The scheduler selects and sequences mission contracts, action-portfolio items, dependency order, verification gates, and human action cards."
+        },
+        adapters: {
+          title: "Device drivers / adapters",
+          description: "Adapters normalize access to shell, git, browser, docs, web, MCP tools, APIs, screenshots, and the human-actuator channel."
+        }
+      };
+
+      document.querySelectorAll(".layer-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const key = button.dataset.layer;
+          const copy = layerCopy[key];
+          if (!copy) return;
+
+          document.querySelectorAll(".layer-button").forEach((item) => item.classList.remove("active"));
+          document.querySelectorAll(".os-node").forEach((item) => item.classList.toggle("active", item.dataset.node === key));
+          button.classList.add("active");
+          document.getElementById("layerTitle").textContent = copy.title;
+          document.getElementById("layerDescription").textContent = copy.description;
+        });
+      });
+
+      const traces = {
+        intent: [
+          '<p><span class="muted">$</span> syscall.intent("create useful state change")</p>',
+          '<p>mission: clarify value, scope, acceptance, and risk</p>',
+          '<p class="muted">status: reasoning can continue in user-space</p>'
+        ],
+        authority: [
+          '<p><span class="muted">$</span> kernel.authority.check()</p>',
+          '<p><span class="hot">inside envelope</span>: local files, git, safe commands</p>',
+          '<p>escalate when payment, identity, legal, production, or private access is required</p>'
+        ],
+        action: [
+          '<p><span class="muted">$</span> adapters.execute()</p>',
+          '<p>tools: shell, git, browser, docs, web, APIs, human action cards</p>',
+          '<p class="muted">all world-changing actions stay visible</p>'
+        ],
+        evidence: [
+          '<p><span class="muted">$</span> evidence.capture()</p>',
+          '<p>proof: diffs, command output, tests, screenshots, citations, returned human evidence</p>',
+          '<p><span class="hot">rule</span>: evidence beats confidence</p>'
+        ],
+        state: [
+          '<p><span class="muted">$</span> filesystem.persist("agent-os/")</p>',
+          '<p>update: missions, ledgers, decisions, risks, handoff, executive snapshot</p>',
+          '<p class="muted">chat context is not canonical memory</p>'
+        ],
+        recovery: [
+          '<p><span class="muted">$</span> recovery.prepare()</p>',
+          '<p>write: BOOTSTRAP.md, latest.md, executive-snapshot.md</p>',
+          '<p class="hot">ready</span>: future agent can resume without chat history</p>'
+        ]
+      };
+
+      const terminal = document.getElementById("terminalBody");
+      const steps = Array.from(document.querySelectorAll(".call-step"));
+      let activeStep = 0;
+      let stepTimer;
+
+      function activateStep(index) {
+        activeStep = index;
+        steps.forEach((step, itemIndex) => step.classList.toggle("active", itemIndex === index));
+        const key = steps[index].dataset.call;
+        terminal.innerHTML = traces[key].join("");
+      }
+
+      steps.forEach((step, index) => {
+        step.addEventListener("click", () => {
+          activateStep(index);
+          if (stepTimer) window.clearInterval(stepTimer);
+        });
+      });
+
+      if (!prefersReducedMotion) {
+        stepTimer = window.setInterval(() => {
+          activateStep((activeStep + 1) % steps.length);
+        }, 3200);
+      }
+
+      const copyButton = document.getElementById("copyBoot");
+      copyButton.addEventListener("click", async () => {
+        const prompt = document.getElementById("bootPrompt").textContent;
+        try {
+          await navigator.clipboard.writeText(prompt);
+          copyButton.textContent = "Copied";
+          window.setTimeout(() => { copyButton.textContent = "Copy"; }, 1600);
+        } catch {
+          copyButton.textContent = "Select text";
+          window.setTimeout(() => { copyButton.textContent = "Copy"; }, 1600);
+        }
+      });
+
+      const revealItems = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.16 });
+        revealItems.forEach((item) => observer.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add("visible"));
+      }
+
+      const canvas = document.getElementById("systemCanvas");
+      const ctx = canvas.getContext("2d");
+      const mouse = { x: 0, y: 0, active: false };
+      let width = 0;
+      let height = 0;
+      let nodes = [];
+      let packets = [];
+      let tick = 0;
+
+      const palette = ["#5ef3bd", "#5fd5ff", "#ffce6a", "#ff6b9d", "#b28cff", "#c7ff7a"];
+
+      function resizeCanvas() {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        canvas.width = Math.floor(width * ratio);
+        canvas.height = Math.floor(height * ratio);
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        createNetwork();
+      }
+
+      function createNetwork() {
+        const centerX = width * 0.68;
+        const centerY = height * 0.48;
+        const radiusX = Math.max(160, width * 0.22);
+        const radiusY = Math.max(120, height * 0.24);
+        const labels = ["Kernel", "AI Principal", "State", "Tools", "Evidence", "Recovery", "Human", "Scheduler"];
+
+        nodes = labels.map((label, index) => {
+          const angle = (Math.PI * 2 * index) / labels.length - Math.PI / 2;
+          const isCore = label === "AI Principal";
+          return {
+            label,
+            x: isCore ? centerX : centerX + Math.cos(angle) * radiusX,
+            y: isCore ? centerY : centerY + Math.sin(angle) * radiusY,
+            baseX: isCore ? centerX : centerX + Math.cos(angle) * radiusX,
+            baseY: isCore ? centerY : centerY + Math.sin(angle) * radiusY,
+            size: isCore ? 58 : 38,
+            color: palette[index % palette.length],
+            phase: Math.random() * Math.PI * 2
+          };
+        });
+
+        packets = Array.from({ length: 18 }, (_, index) => ({
+          from: index % nodes.length,
+          to: (index * 3 + 1) % nodes.length,
+          t: Math.random(),
+          speed: 0.0024 + Math.random() * 0.003,
+          color: palette[index % palette.length]
+        }));
+      }
+
+      function drawBackground() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "#07080a";
+        ctx.fillRect(0, 0, width, height);
+
+        const grid = 54;
+        ctx.strokeStyle = "rgba(255,255,255,0.045)";
+        ctx.lineWidth = 1;
+        for (let x = (tick * 0.12) % grid; x < width; x += grid) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, height);
+          ctx.stroke();
+        }
+        for (let y = (tick * 0.08) % grid; y < height; y += grid) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+      }
+
+      function updateNodes() {
+        nodes.forEach((node, index) => {
+          const driftX = Math.cos(tick * 0.012 + node.phase) * (index === 1 ? 3 : 9);
+          const driftY = Math.sin(tick * 0.01 + node.phase) * (index === 1 ? 3 : 8);
+          let targetX = node.baseX + driftX;
+          let targetY = node.baseY + driftY;
+
+          if (mouse.active) {
+            const dx = mouse.x - node.x;
+            const dy = mouse.y - node.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 190) {
+              const force = (190 - dist) / 190;
+              targetX -= dx * force * 0.12;
+              targetY -= dy * force * 0.12;
+            }
+          }
+
+          node.x += (targetX - node.x) * 0.06;
+          node.y += (targetY - node.y) * 0.06;
+        });
+      }
+
+      function drawNetwork() {
+        const core = nodes[1];
+        nodes.forEach((node, index) => {
+          if (index === 1) return;
+          const opacity = 0.2 + Math.sin(tick * 0.02 + index) * 0.06;
+          ctx.strokeStyle = `rgba(220, 235, 245, ${opacity})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(core.x, core.y);
+          ctx.lineTo(node.x, node.y);
+          ctx.stroke();
+        });
+
+        packets.forEach((packet) => {
+          const from = nodes[packet.from];
+          const to = nodes[packet.to] || core;
+          packet.t += packet.speed;
+          if (packet.t > 1) packet.t = 0;
+          const x = from.x + (to.x - from.x) * packet.t;
+          const y = from.y + (to.y - from.y) * packet.t;
+          ctx.fillStyle = packet.color;
+          ctx.shadowColor = packet.color;
+          ctx.shadowBlur = 18;
+          ctx.beginPath();
+          ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+
+        nodes.forEach((node, index) => {
+          const pulse = Math.sin(tick * 0.04 + node.phase) * 4;
+          ctx.fillStyle = "rgba(7, 8, 10, 0.76)";
+          ctx.strokeStyle = node.color;
+          ctx.lineWidth = index === 1 ? 2 : 1.4;
+          ctx.shadowColor = node.color;
+          ctx.shadowBlur = index === 1 ? 26 : 16;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.size + pulse * 0.35, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = index === 1 ? "#ffffff" : "rgba(245, 247, 250, 0.88)";
+          ctx.font = `${index === 1 ? 13 : 11}px Inter, system-ui, sans-serif`;
+          ctx.textAlign = "center";
+          ctx.fillText(node.label, node.x, node.y + 4);
+        });
+      }
+
+      function animate() {
+        tick += 1;
+        drawBackground();
+        updateNodes();
+        drawNetwork();
+        if (!prefersReducedMotion) requestAnimationFrame(animate);
+      }
+
+      canvas.addEventListener("pointermove", (event) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = event.clientX - rect.left;
+        mouse.y = event.clientY - rect.top;
+        mouse.active = true;
+      });
+
+      canvas.addEventListener("pointerleave", () => {
+        mouse.active = false;
+      });
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+      animate();
+    })();
+  </script>
+</body>
+</html>
