@@ -310,9 +310,9 @@
 
     .hero-readout {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 1px;
-      max-width: 980px;
+      max-width: var(--max);
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--line);
@@ -568,6 +568,12 @@
       bottom: 13%;
     }
 
+    .node-learning {
+      left: calc(50% - 75px);
+      bottom: 5%;
+      border-color: rgba(178, 140, 255, 0.5);
+    }
+
     .panel-readout {
       position: relative;
       z-index: 2;
@@ -789,7 +795,7 @@
 
     .loop {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -1069,6 +1075,11 @@
         bottom: 6%;
       }
 
+      .node-learning {
+        left: calc(50% - 69px);
+        bottom: 4%;
+      }
+
       .panel-readout {
         grid-template-columns: 1fr;
         margin: 12px;
@@ -1121,7 +1132,7 @@
             <p class="eyebrow">AI Operating System</p>
             <h1 id="hero-title"><span>Agent</span><span>OS</span></h1>
             <p class="hero-lede">
-              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies durable memory, permissions, system-call boundaries, observability, recovery, and safety gates.
+              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies durable memory, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="#architecture">Explore the OS</a>
@@ -1148,6 +1159,10 @@
               <span>Persists missions, evidence, decisions, risks, handoff, and memory.</span>
             </div>
             <div class="readout-cell">
+              <strong>Learning System</strong>
+              <span>Turns mission evidence into scoped lessons, promotion candidates, and corrections.</span>
+            </div>
+            <div class="readout-cell">
               <strong>Human actuator</strong>
               <span>Provides identity, trust, signatures, payment authority, and world access.</span>
             </div>
@@ -1163,7 +1178,7 @@
               <h2>The agent thinks in user-space. The OS makes work durable.</h2>
             </div>
             <p>
-              Agent OS keeps the deterministic substrate small. Judgment stays with the AI Principal until repeated evidence proves a behavior is stable, low-ambiguity, safer to enforce, and reversible.
+              Agent OS keeps the deterministic substrate small. Judgment stays with the AI Principal while the Learning System turns evidence into scoped, reversible improvement.
             </p>
           </div>
 
@@ -1185,8 +1200,12 @@
                 <span class="layer-number">04</span>
                 <span class="layer-copy"><b>Scheduler</b><span>Mission contracts, action portfolio, dependencies, and human action cards.</span></span>
               </button>
-              <button class="layer-button" data-layer="adapters">
+              <button class="layer-button" data-layer="learning">
                 <span class="layer-number">05</span>
+                <span class="layer-copy"><b>Learning System</b><span>Learning ledger, failure modes, promotion candidates, quarantine, and corrections.</span></span>
+              </button>
+              <button class="layer-button" data-layer="adapters">
+                <span class="layer-number">06</span>
                 <span class="layer-copy"><b>Adapters</b><span>Shell, git, browser, docs, web, APIs, MCP tools, screenshots, and human channels.</span></span>
               </button>
             </div>
@@ -1211,6 +1230,10 @@
                 <div class="os-node node-human" data-node="scheduler">
                   <strong>Human</strong>
                   <span>Actuator and signatory</span>
+                </div>
+                <div class="os-node node-learning" data-node="learning">
+                  <strong>Learning</strong>
+                  <span>Quarantine and promotion</span>
                 </div>
                 <div class="os-node node-principal" data-node="runtime">
                   <strong>AI Principal</strong>
@@ -1326,6 +1349,11 @@
     human-action-cards.md
   memory/
     executive-snapshot.md
+  learning/
+    learning-ledger.md
+    failure-modes.md
+    promotion-candidates.md
+    correction-log.md
   recovery/
     BOOTSTRAP.md
   handoff/
@@ -1346,6 +1374,10 @@
                 <p>Failed tests, dirty git state, unsafe actions, tool failures, and human updates stop blind continuation.</p>
               </article>
               <article class="capability">
+                <b>Learning quarantine</b>
+                <p>Wrong, stale, overfit, or narrowing lessons lose authority until revised, demoted, rejected, restored, or superseded.</p>
+              </article>
+              <article class="capability">
                 <b>Self-improvement</b>
                 <p>Lessons start as advisory notes, then graduate to skills, evals, templates, automation, or kernel rules only when justified.</p>
               </article>
@@ -1362,7 +1394,7 @@
               <h2>Autonomy with checkpoints, proof, and recovery.</h2>
             </div>
             <p>
-              Agent OS is built for long-running work. It discovers context, chooses missions, executes through tools, verifies outcomes, learns from friction, and leaves the next session recoverable.
+              Agent OS is built for long-running work. It discovers context, chooses missions, executes through tools, verifies outcomes, learns from friction, course-corrects bad lessons, and leaves the next session recoverable.
             </p>
           </div>
 
@@ -1386,6 +1418,10 @@
             <div class="loop-step" style="--accent: var(--violet)">
               <strong>Verify</strong>
               <span>Run checks, review evidence, red-team results, and reject weak or unproven work.</span>
+            </div>
+            <div class="loop-step" style="--accent: var(--amber)">
+              <strong>Learn</strong>
+              <span>Record scoped lessons, failure modes, promotion candidates, and quarantined corrections.</span>
             </div>
             <div class="loop-step" style="--accent: var(--lime)">
               <strong>Recover</strong>
@@ -1438,6 +1474,11 @@
               <b>Kernel-space stays small</b>
               <p>Strategy, product judgment, architecture taste, naming, UX, and synthesis stay in runtime unless proven otherwise.</p>
             </article>
+            <article class="rule" style="--accent: var(--cyan)">
+              <small>07</small>
+              <b>Learning is reversible</b>
+              <p>No learned behavior becomes authoritative without evidence, scope, and a correction path.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -1449,7 +1490,7 @@
               <p class="kicker">Boot sequence</p>
               <h2>Drop the OS into any repo.</h2>
               <p>
-                Commit `AGENT_OS.md`, then ask the agent to boot. It inspects the repository, creates or updates the `agent-os/` runtime state, writes the first mission, executes the safest useful next action, verifies, and leaves recovery state behind.
+                Commit `AGENT_OS.md`, then ask the agent to boot. It inspects the repository, creates or updates the `agent-os/` runtime state and Learning System files, writes the first mission, executes the safest useful next action, verifies, learns, and leaves recovery state behind.
               </p>
               <div class="hero-actions">
                 <a class="btn primary" href="https://github.com/aghimir3/agent-os/blob/main/AGENT_OS.md" target="_blank" rel="noreferrer">Open the spec</a>
@@ -1471,7 +1512,9 @@ Boot Agent OS:
 - Inspect the repo, git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
 - Create or update the minimum viable `agent-os/` state.
+- Create the Learning System files.
 - Create the first Mission Contract.
+- Run the Learning Compiler after verification.
 - Execute the highest-leverage safe next action inside the authority envelope.</pre>
             </div>
           </div>
@@ -1510,6 +1553,10 @@ Boot Agent OS:
         scheduler: {
           title: "Scheduler",
           description: "The scheduler selects and sequences mission contracts, action-portfolio items, dependency order, verification gates, and human action cards."
+        },
+        learning: {
+          title: "Learning System",
+          description: "The Learning System converts mission evidence into scoped lessons, failure modes, promotion candidates, correction logs, and quarantine decisions so improvement remains reversible."
         },
         adapters: {
           title: "Device drivers / adapters",
@@ -1554,7 +1601,7 @@ Boot Agent OS:
         ],
         state: [
           '<p><span class="muted">$</span> filesystem.persist("agent-os/")</p>',
-          '<p>update: missions, ledgers, decisions, risks, handoff, executive snapshot</p>',
+          '<p>update: missions, ledgers, decisions, risks, learning files, handoff, executive snapshot</p>',
           '<p class="muted">chat context is not canonical memory</p>'
         ],
         recovery: [
@@ -1643,7 +1690,7 @@ Boot Agent OS:
         const centerY = height * 0.48;
         const radiusX = Math.max(160, width * 0.22);
         const radiusY = Math.max(120, height * 0.24);
-        const labels = ["Kernel", "AI Principal", "State", "Tools", "Evidence", "Recovery", "Human", "Scheduler"];
+        const labels = ["Kernel", "AI Principal", "State", "Tools", "Evidence", "Recovery", "Human", "Scheduler", "Learning"];
 
         nodes = labels.map((label, index) => {
           const angle = (Math.PI * 2 * index) / labels.length - Math.PI / 2;

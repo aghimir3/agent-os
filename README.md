@@ -2,9 +2,9 @@
 
 **An AI Operating System for autonomous project execution.**
 
-Agent OS is an **AI Operating System** that turns a frontier coding agent into a **Recursive AI Principal**: an accountable executive agent process that can own strategy, implementation, verification, memory, recovery, and continuous improvement inside explicit authority boundaries.
+Agent OS is an **AI Operating System** that turns a frontier coding agent into a **Recursive AI Principal**: an accountable executive agent process that can own strategy, implementation, verification, memory, recovery, reversible learning, and continuous improvement inside explicit authority boundaries.
 
-It goes beyond a prompt, checklist, or project-management wrapper. It is an operating model for long-running AI work: the agent reasons in user-space, while Agent OS supplies the kernel primitives that keep the work durable, safe, observable, and recoverable.
+It goes beyond a prompt, checklist, or project-management wrapper. It is an operating model for long-running AI work: the agent reasons in user-space, while Agent OS supplies the kernel primitives and Learning System that keep the work durable, safe, observable, recoverable, and able to course-correct.
 
 ---
 
@@ -18,6 +18,7 @@ Agent OS is a repo-local AI Operating System for autonomous agents.
 | Process | The Recursive AI Principal and any worker agents or internal specialist passes |
 | Filesystem | `agent-os/` durable project memory |
 | Scheduler | Mission contracts, action portfolio, prioritization, and human action cards |
+| Learning System | Learning ledger, failure modes, promotion candidates, correction log, quarantine, and demotion |
 | Device drivers / adapters | Shell, git, browser, docs, web, MCP/tools, APIs, screenshots, human-actuator channel |
 | System calls | File edits, shell commands, commits, tool calls, web/docs research, and human-actuator requests |
 | Interrupts | Human changes, failed tests, unsafe actions, dirty git state, tool failures, context loss |
@@ -53,6 +54,7 @@ my-project/
     kernel/
     state/
     missions/
+    learning/
     memory/
     recovery/
     handoff/
@@ -79,6 +81,7 @@ Boot Agent OS:
 - Inspect the repo, git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
 - Create or update the minimum viable `agent-os/` state.
+- Create the Learning System files.
 - Create the first Mission Contract.
 - Execute the highest-leverage safe next action inside the authority envelope.
 
@@ -127,6 +130,8 @@ Produce a recovery assessment before resuming material work.
 | Agent orchestration | Work can be split across worker agents or internal specialist passes without losing accountability |
 | Interrupt handling | New evidence, failed checks, unsafe actions, and human updates stop blind continuation |
 | Recovery protocol | Future agents can resume without relying on chat history |
+| Learning System | Mission evidence becomes revised beliefs, failure modes, promotion candidates, and correction records |
+| Learning quarantine | Wrong, stale, overfit, harmful, or narrowing lessons lose authority until revised, demoted, rejected, restored, or superseded |
 | System improvement | Lessons become advisory notes, skills, evals, templates, automations, or kernel rules only when justified |
 
 ---
@@ -156,10 +161,19 @@ User-space stays with the AI Principal:
 
 When a recurring lesson appears, Agent OS records it as an advisory note first. It only becomes deterministic kernel behavior after repeated evidence shows that it is stable, low-ambiguity, safer to enforce, and has an escape hatch.
 
+Self-learning follows a reversible loop:
+
+```text
+observe -> explain -> encode -> test -> promote/demote -> monitor -> recover
+```
+
+Learned patterns should widen option generation or improve judgment. If a lesson creates bad output, overfits to one case, conflicts with evidence, or narrows useful exploration, Agent OS places it in Learning Quarantine and records the correction before trusting it again.
+
 Preservation rules:
 
 - Evidence beats confidence.
 - Advisory notes precede deterministic kernel rules.
+- Learning must be reversible and scoped.
 - The human remains actuator, signatory, trust channel, and physical-world interface.
 - The AI Principal owns decisions, synthesis, orchestration, integration, acceptance, and outcomes.
 - Kernel-space must stay small enough that it supports judgment without replacing it.
@@ -190,6 +204,7 @@ Less ideal for:
 - Commit the generated `agent-os/` state for real projects.
 - Keep `agent-os/memory/executive-snapshot.md` short and current.
 - Keep `agent-os/handoff/latest.md` updated before stopping.
+- Keep `agent-os/learning/` current when missions produce reusable lessons or corrections.
 - Do not store secrets, credentials, private customer data, or regulated data in Agent OS files unless there is an approved process.
 - Use current docs for mutable frameworks, APIs, vendors, deployment, and security assumptions.
 - Treat the human as an actuator and signatory, not the default project manager.
