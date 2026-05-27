@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Agent OS is an AI Operating System for autonomous project execution.">
+  <meta name="description" content="Agent OS is an AI Operating System for autonomous project execution with hot-state boot and optional concurrent sessions.">
   <title>Agent OS | AI Operating System</title>
   <style>
     :root {
@@ -1132,7 +1132,7 @@
             <p class="eyebrow">AI Operating System</p>
             <h1 id="hero-title"><span>Agent</span><span>OS</span></h1>
             <p class="hero-lede">
-              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies task tiers, hot-state boot, durable memory, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
+              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies task tiers, hot-state boot, durable memory, optional concurrent sessions, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="#architecture">Explore the OS</a>
@@ -1160,7 +1160,7 @@
             </div>
             <div class="readout-cell">
               <strong>Filesystem</strong>
-              <span>Persists hot state, missions, evidence, decisions, risks, handoff, and memory.</span>
+              <span>Persists hot state, session records, missions, evidence, risks, handoff, and memory.</span>
             </div>
             <div class="readout-cell">
               <strong>Learning System</strong>
@@ -1194,7 +1194,7 @@
               </button>
               <button class="layer-button" data-layer="runtime">
                 <span class="layer-number">02</span>
-                <span class="layer-copy"><b>Runtime</b><span>AI Principal, worker agents, specialist passes, verifier passes, and red teams.</span></span>
+                <span class="layer-copy"><b>Runtime</b><span>AI Principal, concurrent sessions, worker agents, specialist passes, verifier passes, and red teams.</span></span>
               </button>
               <button class="layer-button" data-layer="filesystem">
                 <span class="layer-number">03</span>
@@ -1338,6 +1338,10 @@
               </header>
               <pre>agent-os/
   hot-state.md
+  sessions/
+    registry.md
+    active/
+    archive/
   kernel/
     authority-envelope.md
     agent-os-model.md
@@ -1369,6 +1373,10 @@
               <article class="capability">
                 <b>Hot-state boot</b>
                 <p>Agents start from a tiny first-read dashboard before opening deeper handoff, snapshot, or ledger files.</p>
+              </article>
+              <article class="capability">
+                <b>Concurrent sessions</b>
+                <p>Multiple agents coordinate through session records, ownership claims, branch discipline, and explicit integration.</p>
               </article>
               <article class="capability">
                 <b>Mission contracts</b>
@@ -1499,7 +1507,7 @@
               <p class="kicker">Boot sequence</p>
               <h2>Drop the OS into any repo.</h2>
               <p>
-                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, inspects only the context required by the tier, creates or updates the `agent-os/` runtime state, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
+                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, detects concurrent sessions when needed, inspects only the context required by the tier, creates or updates the `agent-os/` runtime state, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
               </p>
               <div class="hero-actions">
                 <a class="btn primary" href="https://github.com/aghimir3/agent-os/blob/main/AGENT_OS.md" target="_blank" rel="noreferrer">Open the spec</a>
@@ -1519,6 +1527,7 @@ Read `AGENT_OS.md` in the current directory.
 Boot Agent OS:
 - Identify the current execution mode and task tier.
 - Read `agent-os/hot-state.md` first when it exists and is not contradicted.
+- If concurrent sessions are active, read `agent-os/sessions/registry.md` and the relevant session record before editing.
 - Inspect the smallest sufficient repo context for the tier.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
 - Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
@@ -1554,11 +1563,11 @@ Boot Agent OS:
         },
         runtime: {
           title: "Runtime",
-          description: "The AI Principal and any worker agents operate here. Strategy, product judgment, architecture judgment, naming, UX, synthesis, and acceptance stay in runtime."
+          description: "The AI Principal, concurrent sessions, and worker agents operate here. Strategy, product judgment, architecture judgment, naming, UX, synthesis, and acceptance stay in runtime."
         },
         filesystem: {
           title: "Filesystem",
-          description: "`agent-os/` is durable state: hot state for fast resume, missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
+          description: "`agent-os/` is durable state: hot state for fast resume, optional session records, missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
         },
         scheduler: {
           title: "Scheduler",

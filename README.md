@@ -6,7 +6,7 @@ Agent OS is an **AI Operating System** that turns a frontier coding agent into a
 
 It goes beyond a prompt, checklist, or project-management wrapper. It is an operating model for long-running AI work: the agent reasons in user-space, while Agent OS supplies the kernel primitives and Learning System that keep the work durable, safe, observable, recoverable, and able to course-correct.
 
-Agent OS is complete on demand rather than exhaustive by default. Agents classify task tier first, use fast-path lazy evaluation for low-risk work, and expand into the full recursive protocol only when risk, ambiguity, or material state change requires it.
+Agent OS is complete on demand rather than exhaustive by default. Agents classify task tier first, use fast-path lazy evaluation for low-risk work, and expand into the full recursive protocol only when risk, ambiguity, concurrent-session coordination, or material state change requires it.
 
 ---
 
@@ -20,6 +20,7 @@ Agent OS is a repo-local AI Operating System for autonomous agents.
 | Process | The Recursive AI Principal and any worker agents or internal specialist passes |
 | Filesystem | `agent-os/` durable project memory |
 | Hot state | `agent-os/hot-state.md`, the first-read runtime summary for fast boot and resume |
+| Concurrent sessions | Optional session registry and ownership map for multiple agents working in the same repo |
 | Scheduler | Mission contracts, action portfolio, prioritization, and human action cards |
 | Learning System | Learning ledger, failure modes, promotion candidates, correction log, quarantine, and demotion |
 | Device drivers / adapters | Shell, git, browser, docs, web, MCP/tools, APIs, screenshots, human-actuator channel |
@@ -62,6 +63,12 @@ my-project/
     memory/
     recovery/
     handoff/
+    agents/
+      ownership-map.md
+    sessions/
+      registry.md
+      active/
+      archive/
   src/
 ```
 
@@ -83,6 +90,7 @@ Read `AGENT_OS.md` in the current directory.
 Boot Agent OS:
 - Identify the current execution mode and task tier.
 - Read `agent-os/hot-state.md` first when it exists and is not contradicted.
+- If concurrent sessions are active, read `agent-os/sessions/registry.md` and the relevant session record before editing.
 - Inspect the smallest sufficient repo context for the tier: git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state as needed.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
 - Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
@@ -129,6 +137,7 @@ Produce a recovery assessment before resuming material work.
 |---|---|
 | Task tiers and fast path | Low-risk work uses the smallest safe protocol instead of loading every ledger and loop |
 | Hot state | Agents resume from a tiny first-read dashboard before opening deeper state files |
+| Concurrent sessions | Multiple agents can work in one repo using session records, ownership claims, and explicit integration |
 | Durable memory | Important state survives chat loss, context compaction, and IDE restarts |
 | Mission contracts | Work becomes explicit, scoped, and verifiable |
 | Evidence court | Claims must be backed by tools, files, tests, sources, or human evidence |
@@ -211,6 +220,7 @@ Less ideal for:
 - Commit `AGENT_OS.md`.
 - Commit the generated `agent-os/` state for real projects.
 - Keep `agent-os/hot-state.md` short, current, and first-readable.
+- Use `agent-os/sessions/registry.md` and `agent-os/agents/ownership-map.md` when multiple agents work concurrently.
 - Keep `agent-os/memory/executive-snapshot.md` short and current.
 - Keep `agent-os/handoff/latest.md` updated before stopping.
 - Use the lowest task tier that preserves evidence, authority, recovery, and forward progress.

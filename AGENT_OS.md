@@ -33,6 +33,10 @@ Use these terms consistently:
 - **Task tier** means the operating-depth classification that determines how much context loading, persistence, grounding, orchestration, and verification a task requires.
 - **Fast path** means lazy evaluation for low-risk work: load the smallest reliable context, execute through visible system-call boundaries, verify proportionally, and expand only when triggers require it.
 - **Hot state** means `agent-os/hot-state.md`, the small first-read runtime file that summarizes current mission, branch, next action, risks, assumptions, pending human actions, verification status, and the files to read next.
+- **Concurrent sessions** means multiple Agent OS operating sessions running in parallel in the same repository, requiring session coordination, conflict detection, and ownership claims.
+- **Session ID** means the unique identifier for a discrete Agent OS operating session, used in recovery, ledgers, branch names, and ownership tracking.
+- **Session registry** means `agent-os/sessions/registry.md`, the durable index of active and archived concurrent sessions, their state, ownership claims, conflicts, and recovery metadata.
+- **Ownership claim** means the declaration that an AI Principal, worker, or concurrent session has working rights to a file, symbol, subsystem, branch, or durable state surface until checkpoint, handoff, or release.
 - **Serious work** means Tier 2 or Tier 3 work: any task with meaningful durable state, code, dependency, architecture, product behavior, public/user-facing claims, data handling, security/privacy/legal posture, or coordination impact beyond a micro local change.
 - **Serious session** means any session that includes Tier 2 or Tier 3 work.
 - **Material decision** means a decision with meaningful cost, risk, reversibility concerns, user impact, security/privacy/legal implications, architectural consequences, vendor lock-in, or future coordination cost.
@@ -335,6 +339,8 @@ Interrupts include:
 - User-visible behavior that contradicts claimed readiness.
 - Fast-path evidence that contradicts cached hot state, mission state, assumptions, or expected verification.
 - Scope expansion from Tier 0/1/2 into Tier 3 work.
+- Concurrent-session conflict: another active session owns, edits, or commits to a file, branch, mission, or durable state surface this session intends to change.
+- Stale or inconsistent session registry: `agent-os/sessions/registry.md`, session state, hot state, git, or ownership map disagree.
 
 Interrupt protocol:
 
@@ -710,8 +716,84 @@ Demo only / Alpha / Beta / Production ready
 
 ## Files to read next
 
+## Concurrent sessions
+None / See `agent-os/sessions/registry.md`
+
 ## Fall back to deeper state when
 ```
+
+### Concurrent Sessions
+
+Single-session execution is the default and fastest path. In that mode, `agent-os/hot-state.md` is the repo-level first-read state and `agent-os/missions/current.md` is the canonical active mission.
+
+When multiple independent AI agents or sessions operate in the same repository, Agent OS uses a concurrent-session overlay. The overlay is created only when concurrent work exists or file/branch ownership conflict risk appears. It must not add overhead to ordinary single-session work.
+
+Concurrent-session state lives under:
+
+```text
+agent-os/sessions/
+  registry.md
+  active/
+    <session-id>.md
+  archive/
+```
+
+Use `agent-os/hot-state.md` as the global first-read dashboard in both modes. In concurrent mode, it summarizes repo-level coordination and points to the relevant session records. Each active session keeps its own first-read state in `agent-os/sessions/active/<session-id>.md`.
+
+Session registry template:
+
+```md
+# Session Registry
+
+## Active Sessions
+| Session ID | Status | Mission | Branch | Owned scope | Last checkpoint | Session state |
+|---|---|---|---|---|---|---|
+
+## Archived Sessions
+| Session ID | Status | Mission | Branch | Outcome | Final checkpoint | Archive |
+|---|---|---|---|---|---|---|
+```
+
+Active session state template:
+
+```md
+# Session State
+
+## Session ID
+
+## Status
+Active / Paused / Waiting / Conflict / Closed
+
+## Task tier
+0 / 1 / 2 / 3 / 4
+
+## Mission or objective
+
+## Branch and latest commit
+
+## Owned files, symbols, or subsystems
+
+## Read-only files or sessions depended on
+
+## Last checkpoint
+
+## Verification status
+
+## Blockers or conflicts
+
+## Next exact action
+```
+
+Concurrent-session rules:
+
+1. Create or update `agent-os/sessions/registry.md` only when concurrent sessions exist or are expected.
+2. Every concurrent session gets a unique Session ID and a record in `agent-os/sessions/active/<session-id>.md`.
+3. The global `agent-os/hot-state.md` remains the first file to read. If it indicates concurrent work, load the relevant session record and `agent-os/agents/ownership-map.md` before editing.
+4. No two active sessions may edit the same file, symbol, branch, or mutable Agent OS state file unless one session is explicitly designated as integrator.
+5. Shared ledgers remain canonical, but concurrent sessions should append entries with Session ID, timestamp, related mission, and supersedes/corrects references instead of rewriting existing entries.
+6. If two sessions create contradictory decisions, assumptions, risks, or file changes, mark the conflict in both session state and the relevant ledger, then yield to the AI Principal or designated integrator.
+7. Closing a session means checkpointing its state, updating the registry status, moving its record to `agent-os/sessions/archive/` when appropriate, and integrating accepted evidence or decisions into canonical ledgers.
+8. No hard timeout automatically releases a session. If a session appears stale, interrupted, or inconsistent with git/disk state, enter Recovery Mode and decide whether to resume, archive, supersede, or integrate it.
 
 When creating `agent-os/kernel/agent-os-model.md`, use this compact template:
 
@@ -755,6 +837,11 @@ agent-os/
   README.md
 
   hot-state.md
+
+  sessions/
+    registry.md
+    active/
+    archive/
 
   kernel/
     agent-os-model.md
@@ -1231,6 +1318,8 @@ When bootstrapping Agent OS in any repository:
 17. Begin execution without waiting for further instruction unless blocked by missing authority or essential missing information.
 
 Do not start by asking what to do next when repo evidence or human context provides enough direction to create initial state and choose the first useful action.
+
+When booting as an additional concurrent session, or when `agent-os/hot-state.md` indicates active concurrent work, create or load a Session ID, read `agent-os/sessions/registry.md`, read `agent-os/sessions/active/<session-id>.md` if it exists, and check `agent-os/agents/ownership-map.md` before editing files or mutable Agent OS state.
 
 ---
 
@@ -1726,6 +1815,14 @@ ACCEPT / ACCEPT WITH RISKS / REJECT / CONTINUE
 - Integration happens after first-wave reports.
 - The AI Principal makes the final accept/reject decision.
 
+For concurrent independent sessions:
+
+- Record Session ID, branch, mission, editable scope, read-only scope, and integrator session in `agent-os/agents/ownership-map.md` before parallel edits begin.
+- Treat files owned by other active sessions as read-only unless the owning session checkpoints, yields, or transfers ownership in the registry.
+- Shared files such as build config, dependency manifests, Agent OS state files, and cross-cutting tests require explicit ownership claim or an integrator session before mutation.
+- If ownership claims overlap, stop fast path, mark the conflict in `agent-os/sessions/registry.md`, and let the AI Principal or designated integrator choose serialize, split, merge, or abandon.
+- When a session yields or closes, update the ownership map and session record so future agents can resume without relying on chat history.
+
 ---
 
 # 16. Mission Contracts
@@ -1975,6 +2072,8 @@ Use these triggers:
 | Trigger | Update |
 |---|---|
 | Active mission, branch, next action, verification status, blocker, active risk, or first-read files change | `agent-os/hot-state.md` |
+| Concurrent session starts, pauses, yields, conflicts, closes, or changes branch/scope/checkpoint | `agent-os/sessions/registry.md` and `agent-os/sessions/active/<session-id>.md` |
+| File, branch, symbol, subsystem, or mutable state ownership changes | `agent-os/agents/ownership-map.md` |
 | Material decision is made | `agent-os/state/decision-log.md` |
 | Assumption is created, changed, weakened, supported, or invalidated | `agent-os/state/assumption-ledger.md` |
 | Proof, test result, command output, source, screenshot, or returned human evidence matters to acceptance | `agent-os/state/evidence-ledger.md` and/or `agent-os/evidence/` |
@@ -1986,6 +2085,8 @@ Use these triggers:
 | Commit is made | `agent-os/git/commit-log.md` |
 
 If no trigger fires, do not update that ledger.
+
+Concurrent sessions use append-and-reconcile discipline for shared ledgers. A session must not silently rewrite another session's ledger entry. Instead, append a new entry with Session ID, timestamp, related mission, and `supersedes` or `corrects` references when revising prior state. If two entries contradict each other and both still matter, record a reconciliation note and route the decision to the AI Principal or designated integrator.
 
 ## 19.1 Save Triggers
 
@@ -2070,6 +2171,16 @@ ai/<mission-id>-<short-slug>
 ```
 
 6. Update `agent-os/git/commit-plan.md`.
+
+### 20.1.1 Concurrent Session Git Discipline
+
+When concurrent sessions are active:
+
+- Use session-scoped branches such as `ai/session-<session-id>/<mission-id>-<slug>` unless branch policy specifies another safe pattern.
+- Do not let two concurrent sessions commit to the same branch unless one is explicitly designated as integrator.
+- Check `agent-os/sessions/registry.md` and `agent-os/agents/ownership-map.md` before editing, committing, rebasing, or merging shared files.
+- Include `Session: <session-id>` in non-trivial commit bodies so recovery can trace work back to the operating session.
+- Before merging or rebasing a session branch into a shared target, verify ownership claims, reconcile shared ledgers, run the applicable checks, and record integration evidence in the session record and commit log.
 
 ## 20.2 Commit Plan
 
