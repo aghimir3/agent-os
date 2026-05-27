@@ -3,8 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Agent OS is an AI Operating System for autonomous project execution with hot-state boot and optional concurrent sessions.">
-  <title>Agent OS | AI Operating System</title>
+  <title>Agent OS - AI Operating System for Autonomous Agents</title>
+  <meta name="description" content="Agent OS is a repo-local AI operating system for autonomous coding agents, with hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.">
+  <meta name="keywords" content="Agent OS, AI operating system, autonomous agents, AI coding agents, agent orchestration, durable memory, hot-state boot, recovery, reversible learning">
+  <meta name="author" content="aghimir3">
+  <meta name="application-name" content="Agent OS">
+  <meta name="apple-mobile-web-app-title" content="Agent OS">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#07080a">
+  <link rel="canonical" href="https://aghimir3.github.io/agent-os/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Agent OS">
+  <meta property="og:title" content="Agent OS - AI Operating System for Autonomous Agents">
+  <meta property="og:description" content="A repo-local operating system for autonomous coding agents: hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.">
+  <meta property="og:url" content="https://aghimir3.github.io/agent-os/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Agent OS - AI Operating System for Autonomous Agents">
+  <meta name="twitter:description" content="A repo-local operating system for autonomous coding agents: hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://aghimir3.github.io/agent-os/#website",
+          "name": "Agent OS",
+          "url": "https://aghimir3.github.io/agent-os/",
+          "description": "Agent OS is a repo-local AI operating system for autonomous coding agents.",
+          "inLanguage": "en"
+        },
+        {
+          "@type": "SoftwareSourceCode",
+          "@id": "https://aghimir3.github.io/agent-os/#source",
+          "name": "Agent OS",
+          "description": "A repo-local operating system for autonomous coding agents, with hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.",
+          "url": "https://aghimir3.github.io/agent-os/",
+          "codeRepository": "https://github.com/aghimir3/agent-os",
+          "programmingLanguage": "Markdown",
+          "runtimePlatform": "AI coding agents",
+          "applicationCategory": "DeveloperApplication",
+          "keywords": [
+            "AI operating system",
+            "autonomous agents",
+            "AI coding agents",
+            "agent orchestration",
+            "durable memory",
+            "hot-state boot"
+          ],
+          "isPartOf": {
+            "@id": "https://aghimir3.github.io/agent-os/#website"
+          }
+        }
+      ]
+    }
+  </script>
   <style>
     :root {
       color-scheme: dark;
@@ -100,6 +154,7 @@
       display: inline-flex;
       align-items: center;
       gap: 12px;
+      min-height: 44px;
       min-width: 0;
       font-weight: 760;
     }
@@ -994,6 +1049,13 @@
     }
 
     @media (max-width: 760px) {
+      .nav-inner,
+      .hero-inner,
+      .wrap,
+      .footer-inner {
+        width: calc(100% - 40px);
+      }
+
       .nav-inner {
         height: auto;
         min-height: 64px;
@@ -1006,17 +1068,43 @@
       }
 
       .hero {
-        min-height: 88svh;
-        padding: 96px 0 48px;
+        min-height: auto;
+        padding: 104px 0 72px;
       }
 
       h1 {
         display: block;
-        font-size: clamp(3.2rem, 21vw, 5.4rem);
+        font-size: clamp(3.1rem, 19vw, 5rem);
       }
 
       .hero h1 span {
         display: block;
+      }
+
+      .hero-lede {
+        max-width: 34ch;
+        margin-top: 22px;
+        font-size: 1.02rem;
+        line-height: 1.52;
+        overflow-wrap: break-word;
+      }
+
+      .hero-actions {
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .btn {
+        min-height: 48px;
+        padding: 0 16px;
+      }
+
+      .status-strip {
+        padding-bottom: 44px;
+      }
+
+      .status-strip .hero-readout {
+        margin-top: -48px;
       }
 
       section {
@@ -1091,6 +1179,17 @@
       .rule,
       .capability {
         min-height: auto;
+      }
+
+      .copy-button {
+        min-height: 44px;
+        padding: 0 14px;
+      }
+
+      .footer-inner a {
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
       }
     }
 
