@@ -6,6 +6,8 @@ Agent OS is an **AI Operating System** that turns a frontier coding agent into a
 
 It goes beyond a prompt, checklist, or project-management wrapper. It is an operating model for long-running AI work: the agent reasons in user-space, while Agent OS supplies the kernel primitives and Learning System that keep the work durable, safe, observable, recoverable, and able to course-correct.
 
+Agent OS is complete on demand rather than exhaustive by default. Agents classify task tier first, use fast-path lazy evaluation for low-risk work, and expand into the full recursive protocol only when risk, ambiguity, or material state change requires it.
+
 ---
 
 ## What Agent OS Is
@@ -17,6 +19,7 @@ Agent OS is a repo-local AI Operating System for autonomous agents.
 | Kernel | Authority gates, system-call boundaries, durable state, recovery, interrupts, verification |
 | Process | The Recursive AI Principal and any worker agents or internal specialist passes |
 | Filesystem | `agent-os/` durable project memory |
+| Hot state | `agent-os/hot-state.md`, the first-read runtime summary for fast boot and resume |
 | Scheduler | Mission contracts, action portfolio, prioritization, and human action cards |
 | Learning System | Learning ledger, failure modes, promotion candidates, correction log, quarantine, and demotion |
 | Device drivers / adapters | Shell, git, browser, docs, web, MCP/tools, APIs, screenshots, human-actuator channel |
@@ -51,6 +54,7 @@ my-project/
   AGENT_OS.md
   README.md
   agent-os/
+    hot-state.md
     kernel/
     state/
     missions/
@@ -77,12 +81,13 @@ You are the Recursive AI Principal and Agent OS Orchestrator for this project.
 Read `AGENT_OS.md` in the current directory.
 
 Boot Agent OS:
-- Identify the current execution mode.
-- Inspect the repo, git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state.
+- Identify the current execution mode and task tier.
+- Read `agent-os/hot-state.md` first when it exists and is not contradicted.
+- Inspect the smallest sufficient repo context for the tier: git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state as needed.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
-- Create or update the minimum viable `agent-os/` state.
-- Create the Learning System files.
-- Create the first Mission Contract.
+- Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
+- Create the Learning System files when learning state is in scope or Agent OS is being initialized for ongoing use.
+- Create the first Mission Contract for Tier 2+ work.
 - Execute the highest-leverage safe next action inside the authority envelope.
 
 Do not ask broad clarification questions unless project context cannot be inferred and safe initialization is impossible without human input.
@@ -99,7 +104,7 @@ You are the Recursive AI Principal and Agent OS Orchestrator.
 
 Read `AGENT_OS.md`.
 
-Load `agent-os/handoff/latest.md` and `agent-os/memory/executive-snapshot.md`.
+Load `agent-os/hot-state.md` first. If it is missing, stale, or contradicted, load `agent-os/handoff/latest.md` and `agent-os/memory/executive-snapshot.md`.
 
 Resume the active mission if it is still valid. If not, reconstruct state, update the mission, and execute the next highest-leverage safe action.
 ```
@@ -111,7 +116,7 @@ Use this after crashes, compaction, interrupted work, unclear git state, or conf
 ```markdown
 Enter Recovery Mode.
 
-Read `AGENT_OS.md`, then reconstruct state from `agent-os/recovery/BOOTSTRAP.md`, `agent-os/handoff/latest.md`, `agent-os/memory/executive-snapshot.md`, git status, recent commits, and current disk state.
+Read `AGENT_OS.md`, then reconstruct state from `agent-os/recovery/BOOTSTRAP.md`, `agent-os/hot-state.md`, `agent-os/handoff/latest.md`, `agent-os/memory/executive-snapshot.md`, git status, recent commits, and current disk state.
 
 Produce a recovery assessment before resuming material work.
 ```
@@ -122,6 +127,8 @@ Produce a recovery assessment before resuming material work.
 
 | Capability | Why it matters |
 |---|---|
+| Task tiers and fast path | Low-risk work uses the smallest safe protocol instead of loading every ledger and loop |
+| Hot state | Agents resume from a tiny first-read dashboard before opening deeper state files |
 | Durable memory | Important state survives chat loss, context compaction, and IDE restarts |
 | Mission contracts | Work becomes explicit, scoped, and verifiable |
 | Evidence court | Claims must be backed by tools, files, tests, sources, or human evidence |
@@ -172,6 +179,7 @@ Learned patterns should widen option generation or improve judgment. If a lesson
 Preservation rules:
 
 - Evidence beats confidence.
+- The smallest sufficient protocol is preferred.
 - Advisory notes precede deterministic kernel rules.
 - Learning must be reversible and scoped.
 - The human remains actuator, signatory, trust channel, and physical-world interface.
@@ -202,8 +210,10 @@ Less ideal for:
 
 - Commit `AGENT_OS.md`.
 - Commit the generated `agent-os/` state for real projects.
+- Keep `agent-os/hot-state.md` short, current, and first-readable.
 - Keep `agent-os/memory/executive-snapshot.md` short and current.
 - Keep `agent-os/handoff/latest.md` updated before stopping.
+- Use the lowest task tier that preserves evidence, authority, recovery, and forward progress.
 - Keep `agent-os/learning/` current when missions produce reusable lessons or corrections.
 - Do not store secrets, credentials, private customer data, or regulated data in Agent OS files unless there is an approved process.
 - Use current docs for mutable frameworks, APIs, vendors, deployment, and security assumptions.

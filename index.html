@@ -310,7 +310,7 @@
 
     .hero-readout {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 1px;
       max-width: var(--max);
       border: 1px solid var(--line);
@@ -1132,7 +1132,7 @@
             <p class="eyebrow">AI Operating System</p>
             <h1 id="hero-title"><span>Agent</span><span>OS</span></h1>
             <p class="hero-lede">
-              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies durable memory, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
+              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies task tiers, hot-state boot, durable memory, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="#architecture">Explore the OS</a>
@@ -1155,8 +1155,12 @@
               <span>Enforces authority, system-call boundaries, recovery, and invariants.</span>
             </div>
             <div class="readout-cell">
+              <strong>Fast path</strong>
+              <span>Uses the smallest safe protocol for low-risk work, then expands when risk appears.</span>
+            </div>
+            <div class="readout-cell">
               <strong>Filesystem</strong>
-              <span>Persists missions, evidence, decisions, risks, handoff, and memory.</span>
+              <span>Persists hot state, missions, evidence, decisions, risks, handoff, and memory.</span>
             </div>
             <div class="readout-cell">
               <strong>Learning System</strong>
@@ -1194,7 +1198,7 @@
               </button>
               <button class="layer-button" data-layer="filesystem">
                 <span class="layer-number">03</span>
-                <span class="layer-copy"><b>Filesystem</b><span>The `agent-os/` state tree that survives crashes, compaction, and handoff.</span></span>
+                <span class="layer-copy"><b>Filesystem</b><span>`agent-os/hot-state.md` plus durable ledgers that survive crashes, compaction, and handoff.</span></span>
               </button>
               <button class="layer-button" data-layer="scheduler">
                 <span class="layer-number">04</span>
@@ -1322,7 +1326,7 @@
               <h2>Memory is a filesystem, not a feeling.</h2>
             </div>
             <p>
-              Agent OS treats chat context as volatile. Canonical project memory lives under `agent-os/`, where missions, evidence, risk, decisions, recovery, and handoff survive interruption.
+              Agent OS treats chat context as volatile. Fast resume starts from `agent-os/hot-state.md`; canonical project memory lives under `agent-os/`, where missions, evidence, risk, decisions, recovery, and handoff survive interruption.
             </p>
           </div>
 
@@ -1333,6 +1337,7 @@
                 <span>runtime state</span>
               </header>
               <pre>agent-os/
+  hot-state.md
   kernel/
     authority-envelope.md
     agent-os-model.md
@@ -1361,6 +1366,10 @@
             </div>
 
             <div class="capability-grid reveal">
+              <article class="capability">
+                <b>Hot-state boot</b>
+                <p>Agents start from a tiny first-read dashboard before opening deeper handoff, snapshot, or ledger files.</p>
+              </article>
               <article class="capability">
                 <b>Mission contracts</b>
                 <p>Scope the work, define acceptance, list risks, and keep execution tied to evidence.</p>
@@ -1394,18 +1403,18 @@
               <h2>Autonomy with checkpoints, proof, and recovery.</h2>
             </div>
             <p>
-              Agent OS is built for long-running work. It discovers context, chooses missions, executes through tools, verifies outcomes, learns from friction, course-corrects bad lessons, and leaves the next session recoverable.
+              Agent OS is built for long-running work without forcing every task through maximum ceremony. It classifies task tier, starts from hot state, executes through tools, verifies outcomes, learns from friction, course-corrects bad lessons, and leaves the next session recoverable.
             </p>
           </div>
 
           <div class="loop reveal" aria-label="Agent OS operating loop">
             <div class="loop-step" style="--accent: var(--cyan)">
               <strong>Boot</strong>
-              <span>Read the spec, inspect the repo, classify the project, and initialize durable state.</span>
+              <span>Read the spec, classify task tier, inspect only enough context, and initialize hot state.</span>
             </div>
             <div class="loop-step" style="--accent: var(--amber)">
               <strong>Orient</strong>
-              <span>Load memory, assumptions, risks, decisions, git state, docs, and active constraints.</span>
+              <span>Load hot state first, then deeper memory, assumptions, risks, docs, and constraints when needed.</span>
             </div>
             <div class="loop-step" style="--accent: var(--mint)">
               <strong>Mission</strong>
@@ -1425,7 +1434,7 @@
             </div>
             <div class="loop-step" style="--accent: var(--lime)">
               <strong>Recover</strong>
-              <span>Persist handoff, snapshot, ledgers, and next action so work survives context loss.</span>
+              <span>Persist hot state, triggered ledgers, handoff, snapshot, and next action so work survives context loss.</span>
             </div>
           </div>
         </div>
@@ -1490,7 +1499,7 @@
               <p class="kicker">Boot sequence</p>
               <h2>Drop the OS into any repo.</h2>
               <p>
-                Commit `AGENT_OS.md`, then ask the agent to boot. It inspects the repository, creates or updates the `agent-os/` runtime state and Learning System files, writes the first mission, executes the safest useful next action, verifies, learns, and leaves recovery state behind.
+                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, inspects only the context required by the tier, creates or updates the `agent-os/` runtime state, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
               </p>
               <div class="hero-actions">
                 <a class="btn primary" href="https://github.com/aghimir3/agent-os/blob/main/AGENT_OS.md" target="_blank" rel="noreferrer">Open the spec</a>
@@ -1508,13 +1517,14 @@
 Read `AGENT_OS.md` in the current directory.
 
 Boot Agent OS:
-- Identify the current execution mode.
-- Inspect the repo, git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state.
+- Identify the current execution mode and task tier.
+- Read `agent-os/hot-state.md` first when it exists and is not contradicted.
+- Inspect the smallest sufficient repo context for the tier.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
-- Create or update the minimum viable `agent-os/` state.
-- Create the Learning System files.
-- Create the first Mission Contract.
-- Run the Learning Compiler after verification.
+- Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
+- Create the Learning System files when learning state is in scope.
+- Create the first Mission Contract for Tier 2+ work.
+- Run the Learning Compiler when reusable lessons or corrections exist.
 - Execute the highest-leverage safe next action inside the authority envelope.</pre>
             </div>
           </div>
@@ -1548,7 +1558,7 @@ Boot Agent OS:
         },
         filesystem: {
           title: "Filesystem",
-          description: "`agent-os/` is durable state: missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
+          description: "`agent-os/` is durable state: hot state for fast resume, missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
         },
         scheduler: {
           title: "Scheduler",
@@ -1601,12 +1611,12 @@ Boot Agent OS:
         ],
         state: [
           '<p><span class="muted">$</span> filesystem.persist("agent-os/")</p>',
-          '<p>update: missions, ledgers, decisions, risks, learning files, handoff, executive snapshot</p>',
+          '<p>update: hot-state.md, missions, triggered ledgers, decisions, risks, learning files, handoff, executive snapshot</p>',
           '<p class="muted">chat context is not canonical memory</p>'
         ],
         recovery: [
           '<p><span class="muted">$</span> recovery.prepare()</p>',
-          '<p>write: BOOTSTRAP.md, latest.md, executive-snapshot.md</p>',
+          '<p>write: hot-state.md, BOOTSTRAP.md, latest.md, executive-snapshot.md</p>',
           '<p class="hot">ready</span>: future agent can resume without chat history</p>'
         ]
       };
