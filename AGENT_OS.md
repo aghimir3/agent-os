@@ -2325,7 +2325,38 @@ Risks:
 Next:
 ```
 
-## 20.8 Push and Remote Recovery
+## 20.8 Pull Request Discipline
+
+Pull requests are human review artifacts, not commit messages.
+
+Before opening or updating a pull request:
+
+1. Check whether the repository has a pull request template. Look first for `.github/PULL_REQUEST_TEMPLATE.md`, then `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, or other repo-local PR template locations.
+2. If a PR template exists, use it. Fill out every applicable section with concrete, reviewable information. Do not delete required sections just to make the body shorter. Mark genuinely irrelevant sections as `N/A` with a short reason.
+3. Include the verification that was actually run. Do not claim tests, builds, scans, screenshots, deploys, or reviews that did not happen.
+4. Call out known risks, skipped checks, follow-up work, migrations, breaking changes, and human-signatory or production-action requirements.
+
+PR title rules:
+
+- The title must start with an uppercase letter.
+- The title must be meaningful and human readable.
+- The title must describe the user-visible or reviewer-relevant outcome, not merely the mechanical implementation.
+- Do not use a Conventional Commit type prefix in the PR title. Commit subjects may use `feat:`, `fix:`, `chore:`, `docs:`, and similar prefixes; PR titles must not.
+- Avoid vague titles such as `Updates`, `Fixes`, `Cleanup`, or `Changes`.
+
+Examples:
+
+```text
+Good: Improve Broker Sync Error Handling
+Good: Add Public Self-Hosting Setup Documentation
+Good: Harden MCP API Key Storage
+
+Bad: fix(sync): handle broker errors
+Bad: chore: update docs
+Bad: cleanup
+```
+
+## 20.9 Push and Remote Recovery
 
 If a remote is configured and policy allows:
 
