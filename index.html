@@ -1459,6 +1459,13 @@
     resolved/
   agents/
     ownership-map.md
+  delegation/
+    queue.md
+    prompts/
+    results/
+  verifier-reports/
+  supervisor-reports/
+  skills/
   missions/
     current.md
   queue/
@@ -1489,6 +1496,18 @@
               <article class="capability">
                 <b>Resource kernel</b>
                 <p>Token pressure, context working sets, leases, tool-output volume, and compaction are managed as scarce operating resources.</p>
+              </article>
+              <article class="capability">
+                <b>State packs</b>
+                <p>Durable state scales from no-state answers to full multi-session operation without over-bootstrapping small work.</p>
+              </article>
+              <article class="capability">
+                <b>Supervisor and verifier</b>
+                <p>Serious work can get independent monitoring, readiness checks, and acceptance review before integration.</p>
+              </article>
+              <article class="capability">
+                <b>Delegation queue</b>
+                <p>Workers and independent sessions receive scoped packets, ownership boundaries, and evidence requirements.</p>
               </article>
               <article class="capability">
                 <b>Mission contracts</b>
@@ -1619,7 +1638,7 @@
               <p class="kicker">Boot sequence</p>
               <h2>Drop the OS into any repo.</h2>
               <p>
-                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, checks ownership and interrupts when concurrent sessions are active, inspects only the context required by the tier, creates or updates the `agent-os/` runtime state, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
+                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, checks ownership and interrupts when concurrent sessions are active, inspects only the context required by the tier, creates or updates the smallest sufficient `agent-os/` State Pack, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
               </p>
               <div class="hero-actions">
                 <a class="btn primary" href="https://github.com/aghimir3/agent-os/blob/main/AGENT_OS.md" target="_blank" rel="noreferrer">Open the spec</a>
@@ -1643,7 +1662,7 @@ Boot Agent OS:
 - If concurrent sessions are active, read `agent-os/sessions/registry.md`, the relevant session record, `agent-os/agents/ownership-map.md`, and open interrupts before editing.
 - Inspect the smallest sufficient repo context for the tier: git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state as needed.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
-- Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
+- Create or update `agent-os/hot-state.md` and the smallest `agent-os/` State Pack required by the tier.
 - For Tier 2+ ongoing work, create or update `agent-os/kernel/resource-kernel.md`, `agent-os/state/context-index.md`, recovery files, and executive snapshot as needed.
 - Create the Learning System files when learning state is in scope or Agent OS is being initialized for ongoing use.
 - Create the first Mission Contract for Tier 2+ work.

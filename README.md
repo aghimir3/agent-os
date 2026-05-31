@@ -17,10 +17,17 @@ Agent OS is a repo-local AI Operating System for autonomous agents.
 | OS concept | Agent OS equivalent |
 |---|---|
 | Kernel | Authority gates, system-call boundaries, durable state, recovery, interrupts, verification |
+| Resource Kernel | Token/context pressure, working set, leases, compaction, tool-output discipline |
 | Process | The Recursive AI Principal and any worker agents or internal specialist passes |
 | Filesystem | `agent-os/` durable project memory |
 | Hot state | `agent-os/hot-state.md`, the first-read runtime summary for fast boot and resume |
+| Context index | Page table for reloadable project knowledge, evidence pointers, commands, and stale areas |
 | Concurrent sessions | Optional session registry and ownership map for multiple agents working in the same repo |
+| Interrupt bus | Durable repo-local signals between sessions for material concerns |
+| Supervisor | Independent monitor for evidence, authority, recovery, context pressure, and coordination |
+| Verifier | Independent acceptance and readiness review |
+| Delegation queue | Vendor-independent task/session handoff surface |
+| Skills | Demand-loaded repo-local procedural memory |
 | Scheduler | Mission contracts, action portfolio, prioritization, and human action cards |
 | Learning System | Learning ledger, failure modes, promotion candidates, correction log, quarantine, and demotion |
 | Device drivers / adapters | Shell, git, browser, docs, web, MCP/tools, APIs, screenshots, human-actuator channel |
@@ -57,22 +64,59 @@ my-project/
   agent-os/
     hot-state.md
     kernel/
+      resource-kernel.md
+      authority-envelope.md
+      agent-os-model.md
     state/
+      context-index.md
+      decision-log.md
+      risk-register.md
+      evidence-ledger.md
     missions/
+      current.md
+    delegation/
+      queue.md
+      prompts/
+      results/
+    interrupts/
+      open/
+      resolved/
     learning/
     memory/
+      executive-snapshot.md
     recovery/
+      BOOTSTRAP.md
     handoff/
+      latest.md
     agents/
       ownership-map.md
     sessions/
       registry.md
       active/
       archive/
+    verifier-reports/
+    supervisor-reports/
+    skills/
   src/
 ```
 
 `AGENT_OS.md` is the OS specification. `agent-os/` is the durable runtime state.
+
+---
+
+## State Packs
+
+Agent OS should not over-bootstrap small projects. Use the smallest state pack that preserves recovery, evidence, and forward progress.
+
+| Pack | Use for | Required files |
+|---|---|---|
+| Pack 0 — No durable state | Tier 0 read-only answer | None |
+| Pack 1 — Micro state | Tier 1 local edit with recovery value | `hot-state.md`, optional `handoff/latest.md` |
+| Pack 2 — Standard state | Tier 2 normal implementation | Hot state, mission, triggered evidence/risk/decision ledgers, handoff, context index when needed |
+| Pack 3 — Ongoing project state | Long-running Tier 2+ repo work | Pack 2 + resource kernel, executive snapshot, recovery bootstrap, source log, commit log |
+| Pack 4 — Full operating state | Tier 3 or multi-session work | Pack 3 + sessions, ownership map, interrupts, delegation queue, verifier/supervisor reports, learning files as triggered |
+
+Start small. Expand only when risk, ambiguity, context pressure, coordination, or recovery needs justify it.
 
 ---
 
@@ -93,7 +137,7 @@ Boot Agent OS:
 - If concurrent sessions are active, read `agent-os/sessions/registry.md`, the relevant session record, `agent-os/agents/ownership-map.md`, and open interrupts before editing.
 - Inspect the smallest sufficient repo context for the tier: git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state as needed.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
-- Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
+- Create or update `agent-os/hot-state.md` and the smallest `agent-os/` State Pack required by the tier.
 - For Tier 2+ ongoing work, create or update `agent-os/kernel/resource-kernel.md`, `agent-os/state/context-index.md`, recovery files, and executive snapshot as needed.
 - Create the Learning System files when learning state is in scope or Agent OS is being initialized for ongoing use.
 - Create the first Mission Contract for Tier 2+ work.
@@ -132,6 +176,50 @@ Read `AGENT_OS.md`, then reconstruct state from `agent-os/recovery/BOOTSTRAP.md`
 Produce a recovery assessment before resuming material work.
 ```
 
+### Multi-Session Role Prompts
+
+Use these when your runtime supports multiple independent tasks but not autonomous session spawning.
+
+AI Principal:
+
+```markdown
+You are the AI Principal for this Agent OS mission.
+
+Read `AGENT_OS.md`, `agent-os/hot-state.md`, the active mission, session registry when present, ownership map when present, and open interrupts before editing.
+
+Own decisions, orchestration, integration, acceptance, recovery state, and final outcome. Use the smallest state pack that preserves evidence and recovery. Delegate only with explicit scope, non-goals, ownership boundaries, and required evidence.
+```
+
+Supervisor:
+
+```markdown
+You are a Supervisor Session for this Agent OS mission.
+
+Read `AGENT_OS.md`, hot state, active mission, session registry, ownership map, open interrupts, relevant diffs, evidence, and verifier/worker reports.
+
+Monitor authority, evidence quality, recovery integrity, context pressure, coordination conflicts, and no-progress loops. File interrupts when needed. Do not silently override the AI Principal.
+```
+
+Verifier:
+
+```markdown
+You are a Verifier Session for this Agent OS mission.
+
+Read `AGENT_OS.md`, the active mission, acceptance criteria, relevant diffs, commands, evidence, risks, and handoff state.
+
+Independently check claims, tests, acceptance criteria, security/privacy implications, readiness, and Agent OS state integrity. Return ACCEPT, ACCEPT WITH RISKS, REJECT, or CONTINUE with evidence.
+```
+
+Worker:
+
+```markdown
+You are a Worker Session for this Agent OS mission.
+
+Read `AGENT_OS.md`, your worker/session packet, assigned scope, editable files, read-only dependencies, non-goals, context budget, and required evidence.
+
+Stay inside scope. Do not expand ownership silently. Report files touched, commands run, evidence, what works, what is incomplete, risks, conflicts, and recommended next action.
+```
+
 ---
 
 ## What Agent OS Does
@@ -139,8 +227,13 @@ Produce a recovery assessment before resuming material work.
 | Capability | Why it matters |
 |---|---|
 | Task tiers and fast path | Low-risk work uses the smallest safe protocol instead of loading every ledger and loop |
+| State packs | Durable state scales from no-state answers to full multi-session operation |
 | Hot state | Agents resume from a tiny first-read dashboard before opening deeper state files |
+| Resource Kernel | Tokens, context, output volume, compaction, and attention are managed as scarce resources |
+| Context index | Reloadable project knowledge is preserved by pointer instead of kept live forever |
 | Concurrent sessions | Multiple agents can work in one repo using session records, ownership claims, and explicit integration |
+| Supervisor and Verifier | Serious work can get independent monitoring and acceptance review |
+| Delegation queue | Work can be handed to sessions or humans through explicit packets and evidence requirements |
 | Durable memory | Important state survives chat loss, context compaction, and IDE restarts |
 | Mission contracts | Work becomes explicit, scoped, and verifiable |
 | Evidence court | Claims must be backed by tools, files, tests, sources, or human evidence |
@@ -151,6 +244,7 @@ Produce a recovery assessment before resuming material work.
 | Recovery protocol | Future agents can resume without relying on chat history |
 | Learning System | Mission evidence becomes revised beliefs, failure modes, promotion candidates, and correction records |
 | Learning quarantine | Wrong, stale, overfit, harmful, or narrowing lessons lose authority until revised, demoted, rejected, restored, or superseded |
+| Repo-local skills | Repeatable procedures can be demand-loaded without bloating the main spec |
 | System improvement | Lessons become advisory notes, skills, checklists, templates, automations, or kernel rules only when justified |
 
 ---
@@ -162,6 +256,7 @@ Agent OS keeps the deterministic substrate small.
 Kernel-space owns:
 
 - Permissions and authority gates.
+- Resource and context management.
 - Durable memory and recovery.
 - System-call boundaries.
 - Verification and evidence capture.
@@ -223,6 +318,7 @@ Less ideal for:
 - Commit `AGENT_OS.md`.
 - Record notable spec, runtime-state, and public documentation changes in `CHANGELOG.md`.
 - Commit the generated `agent-os/` state for real projects.
+- Use the smallest state pack that preserves evidence, authority, recovery, and forward progress.
 - Keep `agent-os/hot-state.md` short, current, and first-readable.
 - Keep `agent-os/state/context-index.md` and `agent-os/kernel/resource-kernel.md` current for serious ongoing work.
 - Use `agent-os/sessions/registry.md` and `agent-os/agents/ownership-map.md` when multiple agents work concurrently.
@@ -232,6 +328,7 @@ Less ideal for:
 - Keep `agent-os/learning/` current when missions produce reusable lessons or corrections.
 - Do not store secrets, credentials, private customer data, or regulated data in Agent OS files unless there is an approved process.
 - Use current docs for mutable frameworks, APIs, vendors, deployment, and security assumptions.
+- Keep private/internal regression checks outside public commits when they contain sensitive scenarios or maintainer-only review material.
 - Treat the human as an actuator and signatory, not the default project manager.
 
 ---

@@ -119,7 +119,7 @@ At boot, derive project context from available evidence:
 - `project-description.md`, product briefs, ADRs, issue trackers, or other project-specific docs, if present.
 - Human-provided context in the current session.
 
-Treat discovered context as OBSERVED when verified from files/tools and GIVEN when explicitly provided by the human. If no project context exists, initialize Agent OS as a blank/new repository and choose the safest reversible next action: create minimum viable state, identify unknowns, and produce focused questions or human action cards only for information that blocks useful progress.
+Treat discovered context as OBSERVED when verified from files/tools and GIVEN when explicitly provided by the human. If no project context exists, initialize Agent OS as a blank/new repository and choose the safest reversible next action: create the smallest sufficient state pack, identify unknowns, and produce focused questions or human action cards only for information that blocks useful progress.
 
 Use lazy context loading. Start from the smallest reliable context surface that can answer the current task: the human instruction, active file or symbol, `agent-os/hot-state.md` when present, and the specific project files or state files named by hot state. Expand to README/docs, manifests, tests, git history, handoff, executive snapshot, context index, or full recovery files only when the task tier, uncertainty, contradiction, risk, or context lease requires it.
 
@@ -260,6 +260,38 @@ Track context pressure in `agent-os/hot-state.md` for Tier 2+ work and whenever 
 | YELLOW | Context is growing or noisy | Stop broad loading; prefer targeted reads, summaries, pointers, and context leases |
 | RED | Context threatens correctness or overflow | Checkpoint hot state, summarize evidence, evict raw logs, narrow the mission, and reload only by pointer |
 | OVERFLOW | Model/tool reports context overflow, compaction loses material state, or repeated no-progress behavior follows compaction | Trigger context recovery interrupt before continuing |
+
+Default behavioral triggers:
+
+```md
+# Context Pressure Defaults
+
+## GREEN
+- Working set is narrow.
+- Acceptance criteria, risks, and exact identifiers are still easy to preserve.
+- Verification reserve remains available.
+- No repeated failed action is active.
+
+## YELLOW
+- More than one subsystem is loaded.
+- Tool output is noisy or expanding.
+- Session history is long enough that compaction would lose useful detail.
+- Active facts need leases or reload pointers.
+Action: stop broad loading, summarize, preserve pointers, and update the context index when the working set changed.
+
+## RED
+- The agent risks losing acceptance criteria, unresolved risks, blockers, or exact identifiers.
+- Multiple large logs, files, diffs, or docs are in live context.
+- The same diagnostic path has failed twice.
+- The next action cannot be verified without narrowing context.
+Action: checkpoint hot state, compact, narrow the mission, preserve evidence by pointer, and reload only what is needed.
+
+## OVERFLOW
+- Context limit is hit.
+- Compaction loses material state.
+- Repeated post-compaction failure suggests corrupted or missing context.
+Action: enter context recovery before material work.
+```
 
 The agent must not wait for failure to manage context. If the mission is important and the context is getting long, checkpoint before losing state.
 
@@ -874,7 +906,7 @@ If a behavior requires strategy, product judgment, architecture judgment, naming
 
 ## 10.1 Recommended `agent-os/` Structure
 
-Create this structure unless the repo already has a better equivalent. Do not create every optional file blindly. For small projects, create the minimum viable subset first.
+Create this structure unless the repo already has a better equivalent. Do not create every optional file blindly. For small projects, choose the smallest sufficient State Pack first.
 
 ```text
 agent-os/
@@ -1046,7 +1078,19 @@ agent-os/
     latest.md
 ```
 
-Minimum viable subset for small ongoing projects:
+## 10.1.1 State Packs
+
+Use the smallest state pack that preserves recovery, evidence, authority, context efficiency, and forward progress. State packs are cumulative only when the higher tier needs the lower tier's files; do not create every file merely because it exists in the full architecture.
+
+| Pack | Use for | Required files |
+|---|---|---|
+| Pack 0 — No durable state | Tier 0 read-only answer or simple lookup | None |
+| Pack 1 — Micro state | Tier 1 local edit with recovery value | `agent-os/hot-state.md`; optional `agent-os/handoff/latest.md` |
+| Pack 2 — Standard state | Tier 2 normal implementation, docs, tests, or debugging | Hot state, active mission, evidence/risk/decision ledgers as triggered, handoff, context index when needed |
+| Pack 3 — Ongoing project state | Long-running Tier 2+ repo work | Pack 2 + resource kernel, executive snapshot, recovery bootstrap, source log, commit log |
+| Pack 4 — Full operating state | Tier 3, high-risk, architecture, security/privacy, production, or multi-session work | Pack 3 + sessions, ownership map, interrupts, delegation queue, verifier/supervisor reports, learning files as triggered |
+
+Default ongoing project state when Pack 3 is warranted:
 
 ```text
 agent-os/hot-state.md
@@ -1076,6 +1120,23 @@ agent-os/system-improvement/kernel-boundary.md
 agent-os/recovery/BOOTSTRAP.md
 agent-os/handoff/latest.md
 ```
+
+Pack 4 adds concurrent-session and oversight surfaces only when the mission actually needs them:
+
+```text
+agent-os/sessions/registry.md
+agent-os/sessions/active/<session-id>.md
+agent-os/agents/ownership-map.md
+agent-os/interrupts/open/
+agent-os/interrupts/resolved/
+agent-os/delegation/queue.md
+agent-os/delegation/prompts/
+agent-os/delegation/results/
+agent-os/verifier-reports/
+agent-os/supervisor-reports/
+```
+
+Regression checks may be public sanitized templates or private/internal artifacts depending on repository policy. Do not commit sensitive prompts, exploit patterns, private failure cases, customer data, credentials, or internal-only review material to public repos.
 
 ## 10.2 Hot State Runtime File
 
@@ -1357,6 +1418,19 @@ Supervisor monitoring categories:
 | Quality | Missing tests, security checks, docs, acceptance criteria, or failure-path coverage |
 | Learning | Repeated failures that should become advisory notes, skills, evals, or quarantine records |
 
+### Supervisor Checkpoints
+
+Run or update Supervisor review:
+
+1. Before first material edit in Tier 3 work.
+2. After any worker report.
+3. Before accepting serious worker output.
+4. Before merging or applying a worker branch or patch.
+5. After failed verification.
+6. When context pressure reaches RED or OVERFLOW.
+7. Before claiming production readiness.
+8. Before ending a serious multi-session mission.
+
 ## 11.6 Heartbeats
 
 Each active serious session must update its session record at meaningful checkpoints.
@@ -1417,7 +1491,16 @@ Open / Deferred / Resolved / Superseded
 ## Resolved
 ```
 
-A targeted session must resolve or explicitly defer open high-severity interrupts with a risk statement before continuing material work.
+Open High or Critical interrupts must be resolved, escalated, or explicitly deferred under the rules below before the targeted work continues.
+
+Critical interrupts cannot be deferred by the target session. A Critical interrupt requires one of:
+
+- AI Principal resolution.
+- Designated Integrator resolution.
+- Recovery Officer assessment.
+- Human signatory approval when authority, production, legal, financial, customer, credential, privacy, security, or reputation boundaries are involved.
+
+High-severity interrupts may be deferred only by the AI Principal or designated Integrator, not by the session whose work is being challenged.
 
 ## 11.8 Delegation Queue
 
@@ -1735,7 +1818,7 @@ When bootstrapping Agent OS in any repository:
 2. Inspect the smallest sufficient context surface first: current human input, active file if any, git state, README/docs that define the project, existing `agent-os/hot-state.md`, and only the manifests/source/tests/state files needed to classify the repo.
 3. Classify the repo as existing project, blank/new project, or unclear/recovery case.
 4. Create or update `agent-os/hot-state.md` immediately.
-5. Create or update the `agent-os/` minimum viable state required by the task tier.
+5. Create or update the smallest `agent-os/` State Pack required by the task tier.
 6. Create `agent-os/kernel/resource-kernel.md` or equivalent resource policy immediately for Tier 2+ ongoing work.
 7. Create `agent-os/state/context-index.md` immediately for Tier 2+ ongoing work.
 8. Create `agent-os/recovery/BOOTSTRAP.md` immediately for Tier 2+ work or any repo expected to continue beyond the current session.
@@ -3454,14 +3537,14 @@ Triggered when editing:
 - State schemas.
 - Learning/quarantine policy.
 - Recovery behavior.
-- Agent OS evals or skills.
+- Agent OS regression checks or skills.
 
 Required behavior:
 
 1. Classify as Tier 3 unless the edit is typo-only.
 2. Preserve the AI OS Constitution and Non-Negotiable Preservation Rules.
 3. Check for kernel bloat.
-4. Prefer advisory notes, skills, evals, or templates before expanding core kernel text.
+4. Prefer advisory notes, skills, checks, or templates before expanding core kernel text.
 5. Update README examples if boot behavior changes.
 6. Run or update private/internal regression checks for any new rule.
 7. Add migration notes if existing `agent-os/` state files need schema changes.
@@ -3486,7 +3569,14 @@ If a new section exceeds its usefulness after repeated use, demote it to a skill
 
 ## 30.2 Private Spec Regression Checks
 
-Maintain regression coverage for Agent OS behavior in a private/internal evaluation surface when the repository policy keeps eval artifacts out of public commits.
+Maintain regression coverage for Agent OS behavior according to repository policy.
+
+Regression checks may be:
+
+- Public sanitized templates committed to a repo-local checks or evals surface when they do not reveal sensitive prompts, exploit details, customer data, credentials, private failure cases, or internal review material.
+- Private/internal checks kept outside public commits when they contain sensitive scenarios or material useful only to maintainers.
+
+Public Agent OS repositories may describe the regression-check policy without committing private check files. At minimum, maintainers should privately cover context overflow, malicious context files, session conflicts, missing verification, learning quarantine, and self-hosting kernel edits.
 
 Regression check template:
 
@@ -3764,24 +3854,76 @@ Create `agent-os/kernel/resource-kernel.md`:
 ## Purpose
 Manage scarce operating resources: tokens, context, attention, tool-output volume, session lanes, human time, money, and recovery capacity.
 
-## Current context pressure policy
-GREEN / YELLOW / RED / OVERFLOW definitions:
+## Default pressure policy
+
+### GREEN
+- Working set is narrow.
+- Acceptance criteria, risks, and exact identifiers are preserved.
+- Verification reserve remains available.
+- No repeated failed action is active.
+
+### YELLOW
+- More than one subsystem is loaded.
+- Tool output is noisy or expanding.
+- Session history is long enough that compaction would lose useful detail.
+- Active facts need leases or reload pointers.
+Action: stop broad loading, summarize, preserve pointers, and update the context index when the working set changed.
+
+### RED
+- The agent risks losing acceptance criteria, unresolved risks, blockers, or exact identifiers.
+- Multiple large logs, files, diffs, or docs are in live context.
+- The same diagnostic path has failed twice.
+- The next action cannot be verified without narrowing context.
+Action: checkpoint hot state, compact, narrow the mission, preserve evidence by pointer, and reload only what is needed.
+
+### OVERFLOW
+- Context limit is hit.
+- Compaction loses material state.
+- Repeated post-compaction failure suggests corrupted or missing context.
+Action: enter context recovery before material work.
 
 ## Working set policy
 
+- Keep only the facts, files, symbols, commands, evidence pointers, and constraints needed for the next safe action.
+- Track must-keep, can-evict, and reload-by-pointer context in hot state or context index.
+- Prefer pointers and short summaries over raw logs or full files.
+
 ## Context lease policy
+
+- Every material loaded fact should have a source, reason loaded, validity scope, invalidation trigger, eviction status, and reload pointer.
+- Expired leases must be reloaded or downgraded to UNKNOWN/INFERRED before use.
 
 ## Tool output policy
 
+- Preserve command, exit status, relevant lines, and artifact path.
+- Summarize noisy output immediately.
+- Store raw output only when audit or debugging value justifies it.
+
 ## Compaction policy
+
+- Before compaction risk, update hot state, handoff, executive snapshot, and context index when relevant.
+- Preserve objective, decisions, blockers, risks, acceptance criteria, verification status, exact identifiers, evidence pointers, and next action.
 
 ## No-progress guard
 
+- Stop and re-orient when the same command or tool call fails twice without new information.
+- Stop when three materially similar actions produce no state change.
+- Record the loop pattern and choose a different diagnostic path, narrower scope, rollback, or human action card.
+
 ## Session lane budget
+
+- Default to one AI Principal session.
+- Add Supervisor, Verifier, Worker, or Integrator lanes only when the task tier, risk, or parallelism benefit justifies coordination overhead.
 
 ## Human time budget
 
+- Escalate only when physical-world action, identity, account access, payment, legal authority, social trust, real-world evidence, or licensed judgment is required.
+
 ## Revisit triggers
+- Context pressure reaches RED or OVERFLOW.
+- Verification repeatedly fails without new evidence.
+- Concurrent-session coordination overhead exceeds execution value.
+- Human-actuator tasks are vague, repeated, or missing evidence.
 ```
 
 ## 32.4 Latest Handoff Template
@@ -4095,7 +4237,7 @@ When Agent OS is first invoked:
 4. Inspect repo and git state if tools allow.
 5. Classify the repo as existing project, blank/new project, or unclear/recovery case.
 6. Create or update `agent-os/hot-state.md`.
-7. Create the Agent OS minimum viable state required by the tier.
+7. Create the smallest Agent OS State Pack required by the tier.
 8. Create or update context/resource state when Tier 2+ work is expected.
 9. Create recovery files immediately for Tier 2+ or when future continuation is expected.
 10. Create the Agent OS model file when initializing Agent OS for ongoing use.

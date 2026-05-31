@@ -15,6 +15,11 @@ Use this file to explain material changes to `AGENT_OS.md` and its public compan
 - Added a vendor-independent concurrent-session model with session registry, active session records, ownership map, interrupt bus, supervisor/verifier/worker roles, delegation queue, and conflict-resolution policy.
 - Added Agent OS self-hosting mode for edits to `AGENT_OS.md`, kernel rules, state schemas, recovery behavior, learning policy, and related boot behavior.
 - Added self-hosting, resource-kernel, context-index, ownership-map, and interrupt coverage to the landing page and README boot guidance.
+- Added State Packs so small projects can avoid over-bootstrap while serious missions can expand into full operating state.
+- Added behavioral Resource Kernel defaults for GREEN, YELLOW, RED, and OVERFLOW context pressure.
+- Added Supervisor checkpoints, Critical interrupt handling rules, and stricter High interrupt deferral rules.
+- Added copyable README role prompts for AI Principal, Supervisor, Verifier, and Worker sessions.
+- Added public/private regression-check policy language without committing private internal check artifacts.
 
 ### Changed
 
@@ -22,6 +27,7 @@ Use this file to explain material changes to `AGENT_OS.md` and its public compan
 - Expanded mission contracts, action portfolio entries, evidence checks, principal reports, and handoff templates with context/resource and session-coordination fields.
 - Updated boot, resume, and recovery instructions to load hot state first, then context index, handoff, executive snapshot, session registry, ownership map, and open interrupts when relevant.
 - Updated the landing page metadata, runtime-state tree, copyable boot prompt, architecture descriptions, capability cards, and system-call trace to reflect the newer Agent OS model.
+- Expanded README architecture and example state tree to include the Resource Kernel, context index, interrupt bus, delegation queue, reports, skills, and oversight roles.
 
 ### Restored
 
