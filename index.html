@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agent OS - AI Operating System for Autonomous Agents</title>
-  <meta name="description" content="Agent OS is a repo-local AI operating system for autonomous coding agents, with hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.">
-  <meta name="keywords" content="Agent OS, AI operating system, autonomous agents, AI coding agents, agent orchestration, durable memory, hot-state boot, recovery, reversible learning">
+  <meta name="description" content="Agent OS is a repo-local AI operating system for autonomous coding agents, with hot-state boot, context/resource management, durable memory, recovery, concurrent sessions, and reversible learning.">
+  <meta name="keywords" content="Agent OS, AI operating system, autonomous agents, AI coding agents, agent orchestration, durable memory, hot-state boot, context index, resource kernel, recovery, concurrent sessions, reversible learning">
   <meta name="author" content="aghimir3">
   <meta name="application-name" content="Agent OS">
   <meta name="apple-mobile-web-app-title" content="Agent OS">
@@ -17,11 +17,11 @@
   <meta property="og:locale" content="en_US">
   <meta property="og:site_name" content="Agent OS">
   <meta property="og:title" content="Agent OS - AI Operating System for Autonomous Agents">
-  <meta property="og:description" content="A repo-local operating system for autonomous coding agents: hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.">
+  <meta property="og:description" content="A repo-local operating system for autonomous coding agents: hot-state boot, context/resource management, durable memory, recovery, concurrent sessions, and reversible learning.">
   <meta property="og:url" content="https://aghimir3.github.io/agent-os/">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Agent OS - AI Operating System for Autonomous Agents">
-  <meta name="twitter:description" content="A repo-local operating system for autonomous coding agents: hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.">
+  <meta name="twitter:description" content="A repo-local operating system for autonomous coding agents: hot-state boot, context/resource management, durable memory, recovery, concurrent sessions, and reversible learning.">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -38,7 +38,7 @@
           "@type": "SoftwareSourceCode",
           "@id": "https://aghimir3.github.io/agent-os/#source",
           "name": "Agent OS",
-          "description": "A repo-local operating system for autonomous coding agents, with hot-state boot, durable memory, recovery, concurrent sessions, and reversible learning.",
+          "description": "A repo-local operating system for autonomous coding agents, with hot-state boot, context/resource management, durable memory, recovery, concurrent sessions, and reversible learning.",
           "url": "https://aghimir3.github.io/agent-os/",
           "codeRepository": "https://github.com/aghimir3/agent-os",
           "programmingLanguage": "Markdown",
@@ -50,7 +50,9 @@
             "AI coding agents",
             "agent orchestration",
             "durable memory",
-            "hot-state boot"
+            "hot-state boot",
+            "context index",
+            "resource kernel"
           ],
           "isPartOf": {
             "@id": "https://aghimir3.github.io/agent-os/#website"
@@ -1231,7 +1233,7 @@
             <p class="eyebrow">AI Operating System</p>
             <h1 id="hero-title"><span>Agent</span><span>OS</span></h1>
             <p class="hero-lede">
-              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies task tiers, hot-state boot, durable memory, optional concurrent sessions, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
+              A repo-local operating system for autonomous project execution. The AI Principal owns judgment and outcomes while the kernel supplies task tiers, hot-state boot, context/resource control, durable memory, optional concurrent sessions, permissions, system-call boundaries, observability, recovery, reversible learning, and safety gates.
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="#architecture">Explore the OS</a>
@@ -1251,7 +1253,7 @@
             </div>
             <div class="readout-cell">
               <strong>Kernel</strong>
-              <span>Enforces authority, system-call boundaries, recovery, and invariants.</span>
+              <span>Enforces authority, resource discipline, system-call boundaries, recovery, and invariants.</span>
             </div>
             <div class="readout-cell">
               <strong>Fast path</strong>
@@ -1259,7 +1261,7 @@
             </div>
             <div class="readout-cell">
               <strong>Filesystem</strong>
-              <span>Persists hot state, session records, missions, evidence, risks, handoff, and memory.</span>
+              <span>Persists hot state, context index, session records, missions, evidence, risks, handoff, and memory.</span>
             </div>
             <div class="readout-cell">
               <strong>Learning System</strong>
@@ -1289,7 +1291,7 @@
             <div class="layer-list reveal" aria-label="OS layers">
               <button class="layer-button active" data-layer="kernel">
                 <span class="layer-number">01</span>
-                <span class="layer-copy"><b>Kernel</b><span>Authority, permissions, interrupts, recovery, observability, and invariant gates.</span></span>
+                <span class="layer-copy"><b>Kernel</b><span>Authority, resource policy, permissions, interrupts, recovery, observability, and invariant gates.</span></span>
               </button>
               <button class="layer-button" data-layer="runtime">
                 <span class="layer-number">02</span>
@@ -1297,7 +1299,7 @@
               </button>
               <button class="layer-button" data-layer="filesystem">
                 <span class="layer-number">03</span>
-                <span class="layer-copy"><b>Filesystem</b><span>`agent-os/hot-state.md` plus durable ledgers that survive crashes, compaction, and handoff.</span></span>
+                <span class="layer-copy"><b>Filesystem</b><span>`agent-os/hot-state.md`, context index, and durable ledgers that survive crashes, compaction, and handoff.</span></span>
               </button>
               <button class="layer-button" data-layer="scheduler">
                 <span class="layer-number">04</span>
@@ -1345,7 +1347,7 @@
               </div>
               <div class="panel-readout">
                 <b id="layerTitle">Kernel</b>
-                <p id="layerDescription">The kernel owns deterministic primitives: authority gates, durable memory, system-call boundaries, interrupts, observability, recovery, invariants, and high-risk gates.</p>
+                <p id="layerDescription">The kernel owns deterministic primitives: authority gates, resource policy, durable memory, system-call boundaries, interrupts, observability, recovery, invariants, and high-risk gates.</p>
               </div>
             </div>
           </div>
@@ -1389,7 +1391,7 @@
               <button class="call-step" style="--accent: var(--violet)" data-call="state">
                 <small>05</small>
                 <b>State</b>
-                <span>The result is recorded in missions, ledgers, decisions, risks, and handoff files.</span>
+                <span>The result is recorded in hot state, context index, missions, ledgers, decisions, risks, and handoff files.</span>
               </button>
               <button class="call-step" style="--accent: var(--lime)" data-call="recovery">
                 <small>06</small>
@@ -1409,7 +1411,7 @@
                 <p><span class="hot">authority</span> inside envelope: local files, git, verification</p>
                 <p>action: edit docs + persist decision</p>
                 <p>evidence: diff, checks, commit hash</p>
-                <p>state: update handoff + executive snapshot</p>
+                <p>state: update hot state + context index + handoff</p>
                 <p class="muted">recovery: future agent can resume from disk</p>
               </div>
             </aside>
@@ -1425,7 +1427,7 @@
               <h2>Memory is a filesystem, not a feeling.</h2>
             </div>
             <p>
-              Agent OS treats chat context as volatile. Fast resume starts from `agent-os/hot-state.md`; canonical project memory lives under `agent-os/`, where missions, evidence, risk, decisions, recovery, and handoff survive interruption.
+              Agent OS treats chat context as volatile. Fast resume starts from `agent-os/hot-state.md`; canonical project memory lives under `agent-os/`, where context leases, missions, evidence, risk, decisions, recovery, and handoff survive interruption.
             </p>
           </div>
 
@@ -1442,14 +1444,21 @@
     active/
     archive/
   kernel/
+    resource-kernel.md
     authority-envelope.md
     agent-os-model.md
     interrupt-protocol.md
   state/
+    context-index.md
     decision-log.md
     risk-register.md
     assumption-ledger.md
     evidence-ledger.md
+  interrupts/
+    open/
+    resolved/
+  agents/
+    ownership-map.md
   missions/
     current.md
   queue/
@@ -1475,7 +1484,11 @@
               </article>
               <article class="capability">
                 <b>Concurrent sessions</b>
-                <p>Multiple agents coordinate through session records, ownership claims, branch discipline, and explicit integration.</p>
+                <p>Multiple agents coordinate through session records, ownership claims, interrupt bus entries, branch discipline, and explicit integration.</p>
+              </article>
+              <article class="capability">
+                <b>Resource kernel</b>
+                <p>Token pressure, context working sets, leases, tool-output volume, and compaction are managed as scarce operating resources.</p>
               </article>
               <article class="capability">
                 <b>Mission contracts</b>
@@ -1495,7 +1508,7 @@
               </article>
               <article class="capability">
                 <b>Self-improvement</b>
-                <p>Lessons start as advisory notes, then graduate to skills, evals, templates, automation, or kernel rules only when justified.</p>
+                <p>Lessons start as advisory notes, then graduate to skills, checklists, templates, automation, or kernel rules only when justified.</p>
               </article>
             </div>
           </div>
@@ -1521,7 +1534,7 @@
             </div>
             <div class="loop-step" style="--accent: var(--amber)">
               <strong>Orient</strong>
-              <span>Load hot state first, then deeper memory, assumptions, risks, docs, and constraints when needed.</span>
+              <span>Load hot state first, then context index, memory, assumptions, risks, docs, and constraints when needed.</span>
             </div>
             <div class="loop-step" style="--accent: var(--mint)">
               <strong>Mission</strong>
@@ -1541,7 +1554,7 @@
             </div>
             <div class="loop-step" style="--accent: var(--lime)">
               <strong>Recover</strong>
-              <span>Persist hot state, triggered ledgers, handoff, snapshot, and next action so work survives context loss.</span>
+              <span>Persist hot state, context index, triggered ledgers, handoff, snapshot, and next action so work survives context loss.</span>
             </div>
           </div>
         </div>
@@ -1568,7 +1581,7 @@
             <article class="rule" style="--accent: var(--cyan)">
               <small>02</small>
               <b>Kernel owns invariants</b>
-              <p>Permissions, durable memory, system-call boundaries, interrupts, observability, recovery, and high-risk gates live in the kernel.</p>
+              <p>Permissions, resource management, durable memory, system-call boundaries, interrupts, observability, recovery, and high-risk gates live in the kernel.</p>
             </article>
             <article class="rule" style="--accent: var(--mint)">
               <small>03</small>
@@ -1606,11 +1619,12 @@
               <p class="kicker">Boot sequence</p>
               <h2>Drop the OS into any repo.</h2>
               <p>
-                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, detects concurrent sessions when needed, inspects only the context required by the tier, creates or updates the `agent-os/` runtime state, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
+                Commit `AGENT_OS.md`, then ask the agent to boot. It classifies task tier, reads hot state when present, checks ownership and interrupts when concurrent sessions are active, inspects only the context required by the tier, creates or updates the `agent-os/` runtime state, executes the safest useful next action, verifies proportionally, and leaves recovery state behind.
               </p>
               <div class="hero-actions">
                 <a class="btn primary" href="https://github.com/aghimir3/agent-os/blob/main/AGENT_OS.md" target="_blank" rel="noreferrer">Open the spec</a>
                 <a class="btn" href="https://github.com/aghimir3/agent-os/blob/main/README.md" target="_blank" rel="noreferrer">README</a>
+                <a class="btn" href="https://github.com/aghimir3/agent-os/blob/main/CHANGELOG.md" target="_blank" rel="noreferrer">Changelog</a>
               </div>
             </div>
 
@@ -1626,11 +1640,12 @@ Read `AGENT_OS.md` in the current directory.
 Boot Agent OS:
 - Identify the current execution mode and task tier.
 - Read `agent-os/hot-state.md` first when it exists and is not contradicted.
-- If concurrent sessions are active, read `agent-os/sessions/registry.md` and the relevant session record before editing.
-- Inspect the smallest sufficient repo context for the tier.
+- If concurrent sessions are active, read `agent-os/sessions/registry.md`, the relevant session record, `agent-os/agents/ownership-map.md`, and open interrupts before editing.
+- Inspect the smallest sufficient repo context for the tier: git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state as needed.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
 - Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
-- Create the Learning System files when learning state is in scope.
+- For Tier 2+ ongoing work, create or update `agent-os/kernel/resource-kernel.md`, `agent-os/state/context-index.md`, recovery files, and executive snapshot as needed.
+- Create the Learning System files when learning state is in scope or Agent OS is being initialized for ongoing use.
 - Create the first Mission Contract for Tier 2+ work.
 - Run the Learning Compiler when reusable lessons or corrections exist.
 - Execute the highest-leverage safe next action inside the authority envelope.</pre>
@@ -1658,7 +1673,7 @@ Boot Agent OS:
       const layerCopy = {
         kernel: {
           title: "Kernel",
-          description: "The kernel owns deterministic primitives: authority gates, durable memory, system-call boundaries, interrupts, observability, recovery, invariants, and high-risk gates."
+          description: "The kernel owns deterministic primitives: authority gates, resource policy, durable memory, system-call boundaries, interrupts, observability, recovery, invariants, and high-risk gates."
         },
         runtime: {
           title: "Runtime",
@@ -1666,7 +1681,7 @@ Boot Agent OS:
         },
         filesystem: {
           title: "Filesystem",
-          description: "`agent-os/` is durable state: hot state for fast resume, optional session records, missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
+          description: "`agent-os/` is durable state: hot state for fast resume, context index, optional session records, ownership map, missions, evidence, decisions, risks, recovery files, handoffs, checkpoints, and executive memory."
         },
         scheduler: {
           title: "Scheduler",
@@ -1719,12 +1734,12 @@ Boot Agent OS:
         ],
         state: [
           '<p><span class="muted">$</span> filesystem.persist("agent-os/")</p>',
-          '<p>update: hot-state.md, missions, triggered ledgers, decisions, risks, learning files, handoff, executive snapshot</p>',
+          '<p>update: hot-state.md, context-index.md, missions, triggered ledgers, decisions, risks, learning files, handoff, executive snapshot</p>',
           '<p class="muted">chat context is not canonical memory</p>'
         ],
         recovery: [
           '<p><span class="muted">$</span> recovery.prepare()</p>',
-          '<p>write: hot-state.md, BOOTSTRAP.md, latest.md, executive-snapshot.md</p>',
+          '<p>write: hot-state.md, context-index.md, BOOTSTRAP.md, latest.md, executive-snapshot.md</p>',
           '<p class="hot">ready</span>: future agent can resume without chat history</p>'
         ]
       };

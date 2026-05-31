@@ -90,10 +90,11 @@ Read `AGENT_OS.md` in the current directory.
 Boot Agent OS:
 - Identify the current execution mode and task tier.
 - Read `agent-os/hot-state.md` first when it exists and is not contradicted.
-- If concurrent sessions are active, read `agent-os/sessions/registry.md` and the relevant session record before editing.
+- If concurrent sessions are active, read `agent-os/sessions/registry.md`, the relevant session record, `agent-os/agents/ownership-map.md`, and open interrupts before editing.
 - Inspect the smallest sufficient repo context for the tier: git state, README/docs, manifests, source files, tests, and any existing `agent-os/` state as needed.
 - Classify this as an existing project, blank/new project, or unclear/recovery case.
 - Create or update `agent-os/hot-state.md` and the minimum viable `agent-os/` state required by the tier.
+- For Tier 2+ ongoing work, create or update `agent-os/kernel/resource-kernel.md`, `agent-os/state/context-index.md`, recovery files, and executive snapshot as needed.
 - Create the Learning System files when learning state is in scope or Agent OS is being initialized for ongoing use.
 - Create the first Mission Contract for Tier 2+ work.
 - Execute the highest-leverage safe next action inside the authority envelope.
@@ -112,7 +113,9 @@ You are the Recursive AI Principal and Agent OS Orchestrator.
 
 Read `AGENT_OS.md`.
 
-Load `agent-os/hot-state.md` first. If it is missing, stale, or contradicted, load `agent-os/handoff/latest.md` and `agent-os/memory/executive-snapshot.md`.
+Load `agent-os/hot-state.md` first. If it is missing, stale, or contradicted, load `agent-os/handoff/latest.md`, `agent-os/memory/executive-snapshot.md`, and `agent-os/state/context-index.md`.
+
+If concurrent sessions are active, inspect `agent-os/sessions/registry.md`, the relevant session record, `agent-os/agents/ownership-map.md`, and open interrupts before editing.
 
 Resume the active mission if it is still valid. If not, reconstruct state, update the mission, and execute the next highest-leverage safe action.
 ```
@@ -124,7 +127,7 @@ Use this after crashes, compaction, interrupted work, unclear git state, or conf
 ```markdown
 Enter Recovery Mode.
 
-Read `AGENT_OS.md`, then reconstruct state from `agent-os/recovery/BOOTSTRAP.md`, `agent-os/hot-state.md`, `agent-os/handoff/latest.md`, `agent-os/memory/executive-snapshot.md`, git status, recent commits, and current disk state.
+Read `AGENT_OS.md`, then reconstruct state from `agent-os/recovery/BOOTSTRAP.md`, `agent-os/hot-state.md`, `agent-os/handoff/latest.md`, `agent-os/memory/executive-snapshot.md`, `agent-os/state/context-index.md`, session registry and ownership map when present, open interrupts, git status, recent commits, and current disk state.
 
 Produce a recovery assessment before resuming material work.
 ```
@@ -148,7 +151,7 @@ Produce a recovery assessment before resuming material work.
 | Recovery protocol | Future agents can resume without relying on chat history |
 | Learning System | Mission evidence becomes revised beliefs, failure modes, promotion candidates, and correction records |
 | Learning quarantine | Wrong, stale, overfit, harmful, or narrowing lessons lose authority until revised, demoted, rejected, restored, or superseded |
-| System improvement | Lessons become advisory notes, skills, evals, templates, automations, or kernel rules only when justified |
+| System improvement | Lessons become advisory notes, skills, checklists, templates, automations, or kernel rules only when justified |
 
 ---
 
@@ -218,8 +221,10 @@ Less ideal for:
 ## Practical Rules
 
 - Commit `AGENT_OS.md`.
+- Record notable spec, runtime-state, and public documentation changes in `CHANGELOG.md`.
 - Commit the generated `agent-os/` state for real projects.
 - Keep `agent-os/hot-state.md` short, current, and first-readable.
+- Keep `agent-os/state/context-index.md` and `agent-os/kernel/resource-kernel.md` current for serious ongoing work.
 - Use `agent-os/sessions/registry.md` and `agent-os/agents/ownership-map.md` when multiple agents work concurrently.
 - Keep `agent-os/memory/executive-snapshot.md` short and current.
 - Keep `agent-os/handoff/latest.md` updated before stopping.
